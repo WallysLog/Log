@@ -1,0 +1,3149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wally's Log — V163</title>
+<style>
+:root{ --scale:1; }
+*{box-sizing:border-box}
+body{margin:0;background:#ffffff;color:#000000;font-family:Arial,Helvetica,sans-serif;font-size:calc(24px * var(--scale));line-height:1.45}
+header{background:#003366;color:#fff;padding:10px 20px 0}
+header h1{margin:0;font-size:calc(38px * var(--scale));line-height:1.15}
+header p{margin:4px 0 0;font-size:calc(19px * var(--scale))}
+main{max-width:1200px;margin:0 auto;padding:20px}
+button{font-family:inherit;font-size:calc(24px * var(--scale));font-weight:700;min-height:64px;padding:14px 20px;border:3px solid #000;border-radius:14px;background:#fff;color:#000;cursor:pointer}
+button:focus, input:focus, textarea:focus, select:focus{outline:5px solid #ffcc00;outline-offset:3px}
+button.primary{background:#003366;color:#fff;border-color:#003366}
+button.green{background:#007a33;color:#fff;border-color:#007a33}
+button.yellow{background:#ffcc00;color:#000}
+button.danger{background:#fff;color:#b00000;border-color:#b00000}
+.topbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:16px 0}
+.topbar .spacer{flex:1}
+nav{display:flex;flex-wrap:wrap;gap:12px;margin:20px 0}
+nav button{flex:1 1 180px}
+nav button.active{background:#003366;color:#fff}
+section.card{border:3px solid #000;border-radius:16px;padding:22px;margin:18px 0}
+h2{font-size:calc(32px * var(--scale));margin:0 0 14px}
+h3{font-size:calc(28px * var(--scale));margin:22px 0 10px}
+label{font-weight:700;display:block;margin:18px 0 8px}
+input[type="date"], input[type="time"], select, textarea{width:100%;font-family:inherit;font-size:calc(24px * var(--scale));padding:14px;border:3px solid #000;border-radius:12px;background:#fff;color:#000}
+textarea{min-height:170px;line-height:1.45}
+.storyRow{display:flex;gap:10px;align-items:center}
+.storyTitleInput{flex:1 1 auto;min-width:0;width:auto;font-family:inherit;font-size:calc(24px * var(--scale));padding:14px;border:3px solid #5b3a1e;border-radius:12px;background:#fffdf5;color:#2b1a0e}
+.cleanup-row{margin:12px 0 0}
+.mic{width:100%;min-height:96px;font-size:calc(30px * var(--scale));background:#ffcc00}
+.mic-row{display:flex;gap:12px}.mic-row .mic{flex:1 1 0;min-width:0}#addNewNoteBtn{flex:1 1 0;min-width:0;font-size:calc(30px * var(--scale))}
+.status{font-weight:700;margin:12px 0;min-height:1.4em}
+#storyMicStatus{margin:14px 0;min-height:0}
+#titleMicBtn{background:#ffcc00}
+#micStatus{margin:4px 0}
+#micStatus:empty{display:none}
+label[for="entryText"]{margin-top:8px}
+.moods{display:flex;flex-wrap:wrap;gap:12px}
+.mood{flex:1 1 160px;text-align:left}
+.mood.selected{outline:5px solid #ffcc00}
+.dot{display:inline-block;width:34px;height:34px;border-radius:50%;border:3px solid #000;vertical-align:middle;margin-right:10px}
+.dot.blue{background:#1e88e5}.dot.green{background:#27ae60}.dot.yellow{background:#d4a017}.dot.red{background:#9e3b3b}.dot.none{background:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:12px}
+#summaryScopeRow{justify-content:space-between}
+.chip{min-height:60px}
+.chip.selected{background:#003366;color:#fff}
+.dayrow{border:2px solid #000;border-radius:12px;padding:16px;margin:12px 0;width:100%;text-align:left;background:#fff}
+.dayrow strong{font-size:calc(26px * var(--scale))}
+.small{font-size:calc(20px * var(--scale))}
+.barwrap{margin:14px 0}
+.bar{height:36px;background:#003366;border-radius:8px;min-width:36px;color:#fff;display:flex;align-items:center;padding:0 12px;font-weight:700}
+.tl-chart{width:100%;height:auto;display:block}
+.tl-chart text{font-size:calc(16px * var(--scale));fill:#2b1a0e}
+.tl-chart .tl-total{font-size:calc(18px * var(--scale));font-weight:700}
+.tl-chart .tl-grid{stroke:#d8c9a3;stroke-width:1}
+.tl-chart .tl-base{stroke:#5b3a1e;stroke-width:2}
+.tl-legend{display:inline-flex;align-items:center;gap:8px;margin:6px 16px 6px 0;font-size:calc(18px * var(--scale))}
+.tl-chip{width:22px;height:22px;border-radius:6px;display:inline-block;flex:none}
+#tlTooltip{position:fixed;z-index:200;pointer-events:none;display:none;max-width:440px;background:#fdf6e3;border:3px solid #5b3a1e;border-radius:10px;padding:10px 14px;font-size:calc(20px * var(--scale));color:#2b1a0e;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.datetime-row{display:flex;gap:16px;flex-wrap:wrap}
+.datetime-row .field{flex:1 1 280px}
+.datetime-row.four .field{flex:1 1 200px;display:flex;flex-direction:column}
+.datetime-row.four .field label{min-height:0}
+.datetime-row.four .picker-row{flex:1;display:flex}
+.datetime-row.four .picker-row button{display:flex;align-items:center;justify-content:center}
+@media (max-width:900px){ .datetime-row.four .field{flex:1 1 280px} .datetime-row.four .field label{min-height:0} }
+.datetime-row label{margin-top:18px}
+.statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:16px 0}
+.stat{border:3px solid #000;border-radius:14px;padding:16px;background:#f2f6ff}
+.stat b{font-size:calc(40px * var(--scale));display:block;line-height:1.1}
+.gridwrap{overflow-x:auto}
+table.papergrid{border-collapse:collapse;min-width:940px;width:100%;background-color:#ffffff;background-image:linear-gradient(#dbeafe 1px,transparent 1px),linear-gradient(90deg,#dbeafe 1px,transparent 1px);background-size:28px 28px}
+.papergrid th,.papergrid td{border:2px solid #000;padding:12px 10px;vertical-align:top;text-align:left}
+.papergrid th{background:#ffffff}
+.papergrid .dotcell{width:64px;text-align:center}
+.papergrid .notecell{min-width:310px}
+.papergrid .datecell{width:80px;text-align:center}
+.papergrid .weekcell{width:110px;text-align:center}
+.papergrid .monthcell{width:56px;text-align:center;vertical-align:middle;background:#ffffff}
+.monthvertical{writing-mode:vertical-rl;font-weight:700;letter-spacing:2px;font-size:calc(26px * var(--scale))}
+.underlined{text-decoration:underline;text-underline-offset:5px;font-weight:700}
+.papergrid .wakecell,.papergrid .bedcell{width:130px;white-space:nowrap;text-align:center}
+.papergrid .weathercell{width:360px}
+#viewGrid{overflow:visible}
+#gridStickyHead{background:#fffdf0}
+#gridFixedHead{position:fixed;z-index:25;background:#fffdf0;pointer-events:none;display:none}
+#gridFixedHead table.papergrid{width:100%;margin:0;table-layout:fixed}
+#gridTable .papergrid thead{display:none}
+.entry{border-top:2px solid #ccc;padding:14px 0}
+.entry:first-child{border-top:none}
+a{color:#003366}
+.notice{background:#fff8cc;border:3px solid #ffcc00;border-radius:12px;padding:16px;margin:16px 0}
+footer{padding:20px;text-align:center}
+/* Leather notebook theme — large print and contrast kept */
+body{background:#3a2313;background-image:radial-gradient(circle at 18% 12%, rgba(255,240,200,.10), transparent 42%),radial-gradient(circle at 82% 88%, rgba(0,0,0,.35), transparent 45%);color:#2b1a0e;font-family:'Inter','Nunito',Arial,Helvetica,sans-serif}
+header{position:sticky;top:0;z-index:30;overflow:hidden;background:linear-gradient(160deg,#4a2c1a,#2e1a0e);color:#f5e6c8;border-bottom:6px solid #c9a227;box-shadow:inset 0 -2px 0 rgba(255,255,255,.12), inset 0 2px 0 rgba(0,0,0,.5)}
+header h1{font-family:'Playfair Display','Cinzel',Georgia,serif;color:#f5e6c8;text-shadow:0 -2px 2px rgba(0,0,0,.7), 0 1px 0 rgba(255,235,190,.25);letter-spacing:.5px;font-size:calc(30px * var(--scale))}
+header p{color:#e8d9b5}
+.topbar{color:#f5e6c8}
+header .topbar{margin:0;justify-content:flex-end}
+.header-top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.header-top h1{flex:1 1 auto}
+.topbar button{background:#fdf6e3;color:#2b1a0e;border-color:#5b3a1e}
+h2,h3{font-family:'Playfair Display','Cinzel',Georgia,serif;color:#3a2313}
+h2{border-bottom:3px solid #c9a227;padding-bottom:8px}
+button{background:#fdf6e3;color:#2b1a0e;border-color:#5b3a1e;box-shadow:0 4px 0 rgba(43,26,14,.35)}
+button:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(43,26,14,.35)}
+/* Button hover and click animations — all buttons */
+button{transition:transform .12s ease, box-shadow .12s ease, filter .12s ease}
+button:not(.page-arrow):not(.dot-btn):hover{transform:translateY(-2px);box-shadow:0 6px 0 rgba(43,26,14,.35);filter:brightness(1.06)}
+button:not(.page-arrow):not(.dot-btn):active{transform:translateY(3px) scale(.98);box-shadow:0 1px 0 rgba(43,26,14,.35)}
+.page-arrow:hover{transform:translateY(-50%) scale(1.06);box-shadow:0 4px 10px rgba(0,0,0,.35)}
+button.dot-btn:hover{transform:scale(1.15)}
+button.dot-btn:active{transform:scale(.9)}
+button.primary{background:#1f5c3a;color:#fff;border-color:#143d26;box-shadow:0 4px 0 #143d26}
+button.primary:active{box-shadow:0 1px 0 #143d26}
+button.green{background:#1f5c3a;color:#fff;border-color:#143d26}
+button.yellow{background:#e8a020;color:#2b1a0e;border-color:#5b3a1e}
+nav button.active{background:#1f5c3a;color:#fff;border-color:#143d26}
+section.card{position:relative;overflow:hidden;background:#fdf6e3;border:3px solid #5b3a1e;border-top:8px solid #c9a227;border-radius:12px;box-shadow:0 14px 28px rgba(0,0,0,.45)}
+section.card > *{position:relative;z-index:1}
+input[type="date"], input[type="time"], select, textarea{background:#fffdf5;color:#2b1a0e;border-color:#5b3a1e}
+input[type="date"], input[type="time"]{font-family:'Courier New',ui-monospace,monospace}
+textarea{background-image:repeating-linear-gradient(transparent, transparent 38px, rgba(47,107,58,.18) 39px)}
+.mic{background:#e8a020;color:#2b1a0e;border-color:#5b3a1e;box-shadow:0 5px 0 #8a5a12}
+.mic:active{box-shadow:0 1px 0 #8a5a12}
+.mood.selected{outline-color:#c9a227}
+.chip.selected{background:#1f5c3a;color:#fff;border-color:#143d26}
+.dayrow{background:#fffdf5;border-color:#5b3a1e}
+.bar{background:#1f5c3a}
+.stat{background:#eef3e2;border-color:#5b3a1e}
+.stat b{font-family:'Courier New',ui-monospace,monospace}
+table.papergrid{background-color:#fffdf0;background-image:linear-gradient(#e3dcc0 1px,transparent 1px),linear-gradient(90deg,#e3dcc0 1px,transparent 1px)}
+.papergrid th{background:#fffdf0}
+.papergrid .monthcell{background:#fffdf0}
+.papergrid th{font-family:inherit}
+.papergrid td.wakecell,.papergrid td.bedcell{font-family:inherit}
+.papergrid td.wakecell,.papergrid td.bedcell{cursor:pointer}
+#viewGrid table.papergrid{background-image:none}
+#viewGrid table.papergrid td,#viewGrid table.papergrid th{background-color:#fffdf0;background-image:none}
+.grid-note-line{cursor:pointer}
+button.dot-btn{border:none;background:transparent;padding:0;min-height:0;box-shadow:none}
+.notice{background:#fff3c4;border-color:#c9a227}
+a{color:#1f5c3a}
+footer{color:#f5e6c8}
+@media (prefers-reduced-motion: reduce){ button:active{transform:none} }
+/* Open-book month view — like the Moleskine spread in the photo */
+.month-nav{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:0 0 18px}
+.month-nav button{flex:0 0 auto}
+.month-head{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;border-bottom:3px solid #c9a227;padding-bottom:8px;margin:0 0 14px}
+.month-head h2{margin:0;border-bottom:none;padding-bottom:0;flex:1 1 auto}
+.month-head .month-nav{margin:0;margin-left:auto}
+.spread{display:flex;gap:0;margin:22px 0;background:#2e1a0e;padding:14px;border-radius:10px;box-shadow:0 12px 26px rgba(0,0,0,.45);align-items:stretch}
+.book-page{flex:1 1 0;min-width:0;height:auto;overflow:visible;overflow-wrap:break-word;background:#fffdf0;border:2px solid #c9a227;padding:22px 24px;background-image:repeating-linear-gradient(transparent, transparent 38px, rgba(47,107,58,.20) 39px);display:flex;flex-direction:column;cursor:pointer}
+.book-page.page-left{border-radius:8px 2px 2px 8px;box-shadow:inset -20px 0 26px -20px rgba(0,0,0,.5);margin-right:2px}
+.book-page.page-right{border-radius:2px 8px 8px 2px;box-shadow:inset 20px 0 26px -20px rgba(0,0,0,.5);margin-left:2px}
+.book-page.blank{cursor:default}
+.page-head{position:relative;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:12px;font-family:'Playfair Display','Cinzel',Georgia,serif}
+.book-page.blank .page-head{min-height:calc(62px * var(--scale))}
+.page-arrow{position:absolute;top:50%;transform:translateY(-50%);width:calc(62px * var(--scale));height:calc(62px * var(--scale));min-height:0;padding:0;border-radius:50%;border:3px solid #2b1a0e;background:#fffdf0;color:#2b1a0e;font-size:calc(30px * var(--scale));display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.page-arrow:active{transform:translateY(-50%) scale(.94)}
+.page-arrow-left{left:0}
+.page-arrow-right{right:0}
+.book-page.page-left .page-month{margin-left:calc(74px * var(--scale))}
+.book-page.page-right .page-head{justify-content:flex-end}
+.book-page.page-right .page-num{margin-right:calc(74px * var(--scale))}
+.spread{perspective:2000px}
+.spread .book-page{transform-style:preserve-3d;backface-visibility:hidden}
+.spread.turn-next .book-page.page-right{animation:pageCurlNext .85s ease forwards;transform-origin:left center;z-index:2}
+.spread.turn-prev .book-page.page-left{animation:pageCurlPrev .85s ease forwards;transform-origin:right center;z-index:2}
+@keyframes pageCurlNext{0%{transform:rotateY(0deg);box-shadow:0 0 0 rgba(0,0,0,0)}50%{transform:rotateY(-90deg);box-shadow:-24px 0 32px rgba(0,0,0,.45)}100%{transform:rotateY(-180deg);box-shadow:0 0 0 rgba(0,0,0,0)}}
+@keyframes pageCurlPrev{0%{transform:rotateY(0deg);box-shadow:0 0 0 rgba(0,0,0,0)}50%{transform:rotateY(90deg);box-shadow:24px 0 32px rgba(0,0,0,.45)}100%{transform:rotateY(180deg);box-shadow:0 0 0 rgba(0,0,0,0)}}
+@media (prefers-reduced-motion: reduce){ .spread.turn-next .book-page.page-right, .spread.turn-prev .book-page.page-left{animation:none} }
+.page-num{font-size:calc(62px * var(--scale));font-weight:900;line-height:1;color:#2b1a0e}
+.page-month{font-size:calc(32px * var(--scale));font-weight:700;color:#2b1a0e}
+.page-weekday{font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:4px}
+.page-rule{border-top:3px solid #2b1a0e;margin:10px 0 18px}
+.page-body{flex:1 1 auto;min-height:0;overflow:visible}
+.page-entry{margin:0 0 14px;overflow-wrap:break-word}
+.page-add-btn{margin:0}
+.page-meta{font-family:'Inter','Nunito',Arial,Helvetica,sans-serif;font-size:calc(24px * var(--scale))}
+.sun-icon{width:calc(38px * var(--scale));height:calc(26px * var(--scale));vertical-align:middle;margin:0 3px}
+.page-weather-divider,.page-section-divider{border:0;border-top:3px solid #5b3a1e;margin:18px 0 8px}
+.save-divider{border:0;border-top:3px solid #5b3a1e;margin:18px 0 8px}
+.page-weather-label,.page-section-label{font-family:'Inter','Nunito',Arial,Helvetica,sans-serif;font-size:calc(24px * var(--scale));font-weight:700;margin:0 0 6px;color:#2b1a0e}
+.page-weather-text{margin-top:0;margin-bottom:0}
+.sleep-row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap}
+/* Empty Sleep section: the gap below the label would be the label's 6px bottom margin + the next divider's 18px top margin = 24px, but the gap above the label (divider's 8px bottom margin) is 8px. The -16px on the empty row brings the gap below the label to 8px, matching the gap above. */
+.sleep-row-empty{margin-bottom:-16px}
+/* Sleep row with data: the next (Weather) divider's 18px top margin would leave 18px below the Sleep line, but the gap below the Weather text is 8px. The -10px brings the gap below the Sleep line to 8px, matching it. */
+.sleep-row-filled{margin-bottom:-10px}
+.sleep-row .sleep-value{margin-left:auto;white-space:nowrap}
+.page-week{border-top:3px solid #2b1a0e;padding-top:10px;margin-top:8px;font-weight:700}
+.page-body .small{color:#5b3a1e}
+@media (max-width:700px){ .spread{flex-direction:column;gap:14px} .book-page.page-left,.book-page.page-right{margin:0;border-radius:8px;box-shadow:none} }
+
+/* Large custom pickers — replaces the small native date/time/month pop-ups */
+.picker-row{display:flex;gap:12px;align-items:stretch}
+.picker-row button{flex:1 1 auto;width:100%;white-space:normal;text-align:center}
+.picker-overlay{position:fixed;inset:0;background:rgba(43,26,14,.78);display:flex;align-items:flex-start;justify-content:center;padding:20px;z-index:100;overflow-y:auto}
+.picker-card{background:#fdf6e3;border:4px solid #5b3a1e;border-top:8px solid #c9a227;border-radius:12px;padding:22px;max-width:760px;width:100%;box-shadow:0 20px 40px rgba(0,0,0,.5)}
+.picker-card h3{font-family:'Playfair Display','Cinzel',Georgia,serif}
+.unsaved-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.unsaved-row .primary, .unsaved-row .danger{margin-left:auto}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
+.cal-head{font-weight:700;text-align:center;padding:12px 0}
+.cal-day{min-height:72px;padding:10px 4px;font-size:calc(28px * var(--scale))}
+.cal-day.selected{background:#1f5c3a;color:#fff;border-color:#143d26}
+.cal-day.today{outline:4px solid #c9a227}
+.cal-day.blank{background:transparent;border-color:transparent;cursor:default;box-shadow:none}
+.time-section{margin:18px 0}
+.time-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.time-btn{min-height:72px;font-size:calc(28px * var(--scale))}
+.time-btn.selected{background:#1f5c3a;color:#fff;border-color:#143d26}
+.month-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.month-btn{min-height:72px;font-size:calc(26px * var(--scale))}
+.month-btn.selected{background:#1f5c3a;color:#fff;border-color:#143d26}
+@media (max-width:600px){ .cal-grid{gap:6px} .cal-day{min-height:64px} .time-grid{grid-template-columns:repeat(3,1fr)} .month-grid{grid-template-columns:repeat(2,1fr)} }
+/* Compact time picker — Hour, Minute and AM/PM side by side, not stacked */
+.time-picker-columns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+#timePickerOverlay .picker-card{padding:16px 20px}
+#timePickerOverlay .picker-card h3{margin:0 0 12px}
+#timePickerOverlay .time-section{margin:0}
+#timePickerOverlay .time-section p{margin:0 0 8px}
+#timePickerOverlay .time-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+#timePickerOverlay #timeAmPmGrid{grid-template-columns:1fr}
+#timePickerOverlay .time-btn{min-height:60px;padding:12px 8px}
+.time-actions{display:flex;flex-wrap:wrap;gap:12px;margin:16px 0 0}
+.time-actions button{flex:1 1 140px}
+@media (max-width:600px){ .time-picker-columns{grid-template-columns:1fr} }
+
+/* Paper grid — full browser width, all months */
+#viewGrid{margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);border-radius:0}
+#viewGrid table.papergrid{width:100%}
+.day-complete{color:#2e7d4f;font-weight:700}
+.month-divider .complete-count{font-size:calc(24px * var(--scale));font-weight:400}
+.month-divider{font-family:'Playfair Display','Cinzel',Georgia,serif;font-size:calc(34px * var(--scale));font-weight:700;color:#2b1a0e;background:#eef3e2;border:3px solid #5b3a1e;border-left:10px solid #c9a227;padding:16px 20px;margin:36px 0 14px}
+.month-divider:first-child{margin-top:6px}
+
+.pain-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.pain-btn{min-height:120px}
+.pain-face{font-size:calc(56px * var(--scale));display:block;line-height:1.1}
+.pain-num{font-size:calc(28px * var(--scale));font-weight:700;display:block}
+.pain-label{font-size:calc(20px * var(--scale));display:block}
+.pain-btn.selected{background:#1f5c3a;color:#fff;border-color:#143d26}
+@media (max-width:600px){ .pain-grid{grid-template-columns:repeat(2,1fr)} }
+@media (prefers-reduced-motion: reduce){ button{transition:none} button:not(.page-arrow):not(.dot-btn):hover, button:not(.page-arrow):not(.dot-btn):active{transform:none} .page-arrow:hover, .page-arrow:active{transform:translateY(-50%)} button.dot-btn:hover, button.dot-btn:active{transform:none} }
+.dashboard-head{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;border-bottom:3px solid #c9a227;padding-bottom:8px;margin:0 0 14px}
+.dashboard-head h2{margin:0;border-bottom:none;padding-bottom:0;flex:1 1 auto}
+.grid-head{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;border-bottom:3px solid #c9a227;padding-bottom:8px;margin:0 0 14px}
+.grid-head h2{margin:0;border-bottom:none;padding-bottom:0;flex:1 1 auto}
+.header-title-strip{background:#fdf6e3;border-top:6px solid #c9a227;margin:0 -20px;padding:10px 20px 12px}
+.header-title{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.header-title h2{margin:0;border-bottom:none;padding-bottom:0;flex:1 1 auto;color:#3a2313}
+.header-title .month-nav{margin:0;margin-left:auto}
+.summary-actions{display:flex;gap:12px;flex-wrap:wrap;margin-left:auto}
+nav{gap:0;margin:12px 0 0;align-items:stretch}
+nav button{flex:1 1 0;min-height:52px;padding:10px 12px;border-radius:14px 14px 0 0;border-bottom:none;box-shadow:none;background:#e8d9b5;color:#2b1a0e}
+nav button + button{border-left:none}
+nav button.active{background:#fdf6e3;color:#2b1a0e;border-color:#5b3a1e}
+nav button:focus,nav button:hover{outline:none}
+section.card{margin:0 0 18px}
+@media print{ nav,.topbar,button,.mic{display:none !important} body{font-size:18px} }
+@page{ size: Letter; margin: 0.5in; }
+@media print{
+  #viewGrid .gridwrap{overflow:visible}
+  #viewGrid table.papergrid{width:100%;min-width:0;table-layout:fixed}
+  #viewGrid table.papergrid th,#viewGrid table.papergrid td{padding:6px 4px;overflow-wrap:break-word}
+  #viewGrid table.papergrid th.datecell,#viewGrid table.papergrid td.datecell{width:6%}
+  #viewGrid table.papergrid th.weekcell,#viewGrid table.papergrid td.weekcell{width:9%}
+  #viewGrid table.papergrid th.notecell,#viewGrid table.papergrid td.notecell{width:33%;min-width:0}
+  #viewGrid table.papergrid th.wakecell,#viewGrid table.papergrid td.wakecell{width:14%}
+  #viewGrid table.papergrid th.bedcell,#viewGrid table.papergrid td.bedcell{width:14%}
+  #viewGrid table.papergrid th.weathercell,#viewGrid table.papergrid td.weathercell{width:24%}
+  #viewGrid table.papergrid tr{break-inside:avoid}
+  #gridFixedHead{display:none !important}
+  #gridTable .papergrid thead{display:table-header-group}
+}
+</style>
+</head>
+<body>
+<header>
+<nav aria-label="Sections">
+<button type="button" id="tabRecord" onclick="tabTo('record')">Record today</button>
+<button type="button" id="tabMonth" onclick="tabTo('month')">Journal View</button>
+<button type="button" id="tabGrid" onclick="tabTo('grid')">Grid View</button>
+<button type="button" id="tabSummary" onclick="tabTo('summary')">Dashboard</button>
+<button type="button" id="tabStories" onclick="tabTo('stories')">Stories</button>
+<button type="button" id="tabHelp" onclick="tabTo('help')">Help &amp; Backup</button>
+</nav>
+<div class="header-title-strip">
+<div class="header-title" id="titleRecord" style="display:none"><h2>Wally's Log: Record how you are feeling</h2></div>
+<div class="header-title" id="titleMonth"><h2 id="monthTitle">Wally's Log: This month</h2><div class="month-nav"><button type="button" onclick="changeMonth(-1)">◀ Previous month</button><button type="button" onclick="goToCurrentMonth()">Today</button><button type="button" onclick="changeMonth(1)">Next month ▶</button></div><div class="summary-actions"><button type="button" onclick="window.print()">Print</button></div></div>
+<div class="header-title" id="titleSummary" style="display:none"><h2>Wally's Log: Dashboard</h2><div class="summary-actions"><button type="button" onclick="window.print()">Print</button></div></div>
+<div class="header-title" id="titleStories" style="display:none"><h2>Wally's Log: Stories</h2><div class="summary-actions"><button type="button" id="storyIndexBtn" onclick="toggleStoryIndex()">View Index</button><button type="button" onclick="window.print()">Print</button></div></div>
+<div class="header-title" id="titleGrid" style="display:none"><h2>Wally's Log: Grid View</h2><div class="month-nav"><button type="button" onclick="gridPrevMonth()">◀ Previous month</button><button type="button" onclick="gridToday()">Today</button><button type="button" onclick="gridNextMonth()">Next month ▶</button></div><div class="summary-actions"><button type="button" onclick="window.print()">Print</button></div></div>
+<div class="header-title" id="titleHelp" style="display:none"><h2>Wally's Log: Help &amp; Backup</h2><div class="summary-actions" aria-label="Text size"><button type="button" onclick="changeScale(-0.15)">Text Smaller</button><button type="button" onclick="changeScale(0.15)">Text Bigger</button></div></div>
+</div>
+</header>
+<main>
+
+<div id="voiceNote" class="notice" style="display:none"></div>
+
+<!-- RECORD -->
+<section class="card" id="viewRecord">
+<div class="datetime-row four">
+<div class="field"><label for="entryDateBtn">Day</label><div class="picker-row"><button type="button" id="entryDateBtn" onclick="openDatePicker()">📅 Pick a day</button></div><input type="hidden" id="entryDate"></div>
+<div class="field"><label for="entryTimeBtn">Time of this note</label><div class="picker-row"><button type="button" id="entryTimeBtn" onclick="openTimePicker('entryTime')">🕐 Pick a time</button></div><input type="hidden" id="entryTime"></div>
+<div class="field"><label for="wakeTimeBtn">Wake time</label><div class="picker-row"><button type="button" id="wakeTimeBtn" onclick="openTimePicker('wakeTime')">🕐 Pick a time</button></div><input type="hidden" id="wakeTime"></div>
+<div class="field"><label for="bedTimeBtn">Bed time</label><div class="picker-row"><button type="button" id="bedTimeBtn" onclick="openTimePicker('bedTime')">🕐 Pick a time</button></div><input type="hidden" id="bedTime"></div>
+</div>
+<p>Press the button and just talk — the words appear below as you speak. Press it again to stop. Check or edit the entry, pick a colour and any topics, and press the Save button below.</p>
+<div class="mic-row"><button type="button" class="mic" id="micBtn" onclick="toggleMic()">Click to Record</button>
+<button type="button" id="addNewNoteBtn" onclick="startNewNote()" style="display:none">Add new note for the same day</button></div>
+<p class="status" id="micStatus" role="status"></p>
+
+<label for="entryText">What happened, in your own words</label>
+<textarea id="entryText" placeholder="Example: Found it tough to complete my exercises today. Leg was bothering me."></textarea>
+<p class="cleanup-row"><button type="button" onclick="cleanUpText()">Clean Up Text</button></p>
+
+
+
+<label>How was the day? Pick a colour</label>
+<div class="moods" id="moodRow" role="group" aria-label="Day colour">
+<button type="button" class="mood" data-mood="green" onclick="setMood('green')"><span class="dot green"></span>Good Day</button>
+<button type="button" class="mood" data-mood="yellow" onclick="setMood('yellow')"><span class="dot yellow"></span>Getting by</button>
+<button type="button" class="mood" data-mood="blue" onclick="setMood('blue')"><span class="dot blue"></span>Tough day</button>
+<button type="button" class="mood" data-mood="red" onclick="setMood('red')"><span class="dot red"></span>Hard/Pain</button>
+</div>
+<p id="painLevelLine" class="small" role="status"></p>
+
+<label>Who is this about? Tap all that apply</label>
+<div class="chips" id="peopleRow"></div>
+<label>What was it about? Tap all that apply</label>
+<div class="chips" id="chipRow"></div>
+
+<hr class="save-divider">
+<p>
+<button type="button" onclick="readAloud()">Read it aloud</button>
+<button type="button" onclick="clearForm()">Clear form</button>
+<button type="button" class="danger" id="deleteEntryBtn" onclick="deleteCurrentEntry()" style="display:none">Delete this entry</button>
+<button type="button" class="primary" onclick="saveEntry()">Save this entry</button>
+</p>
+<p class="status" id="saveStatus" role="status"></p>
+<div id="otherEntries"></div>
+</section>
+
+<!-- MONTH -->
+<section class="card" id="viewMonth" style="display:none">
+
+<p class="small">Tap any page to open that day. Weather for Toronto is fetched automatically.</p>
+<div id="monthList"></div>
+</section>
+
+<!-- SUMMARY (Patterns + Dashboard, merged) -->
+<section class="card" id="viewSummary" style="display:none">
+
+<p>This counts your health topics and family notes. It does not diagnose anything. Use it to look back, compare months, or print it to share with family or a doctor.</p>
+<label>Look at</label>
+<div class="chips" id="summaryScopeRow" role="group" aria-label="Look at">
+<button type="button" class="chip selected" id="summaryScopeThis" onclick="setSummaryScope('this')">This Month</button>
+<button type="button" class="chip" id="summaryScopeLast" onclick="setSummaryScope('last')">Last Month</button>
+<button type="button" class="chip" id="summaryScopeMonth" onclick="setSummaryScope('month')">Pick a Month</button>
+<button type="button" class="chip" id="summaryScopeAll" onclick="setSummaryScope('all')">All Time</button>
+<button type="button" class="chip" id="summaryScopeYear" onclick="setSummaryScope('year')">One Year</button>
+<button type="button" class="chip" id="summaryScopeCompare" onclick="setSummaryScope('compare')">Compare Months</button>
+</div>
+<input type="hidden" id="summaryScope" value="this">
+<input type="hidden" id="dashMonth">
+<div id="summaryYearWrap" style="display:none"><label for="dashYear">Year</label><select id="dashYear" onchange="renderSummary()"></select></div>
+<input type="hidden" id="patternCompareA">
+<input type="hidden" id="patternCompareB">
+<div id="summaryContent"></div>
+</section>
+
+<!-- STORIES -->
+<section class="card" id="viewStories" style="display:none">
+<div id="storyFormWrap">
+<p>Life stories, in your own words. Start the recording and add the title after you're done.</p>
+<div class="mic-row"><button type="button" class="mic" id="storyMicBtn" onclick="toggleStoryMic()">Click to Record Story</button></div>
+<p class="status" id="storyMicStatus" role="status"></p>
+<textarea id="storyText" aria-label="The story" placeholder="Example: The summer we built the cottage. It was the summer of 1962, and the lake was so warm..." oninput="storyTextChanged()"></textarea>
+<div id="storyTitleRow" style="display:none;margin-top:10px">
+<label for="storyTitleField">Title for this story (optional)</label>
+<div class="storyRow"><input type="text" class="storyTitleInput" id="storyTitleField" placeholder="Type a title for this story"><button type="button" id="titleMicBtn" onclick="toggleTitleMic()">Record Title</button></div>
+</div>
+<p class="cleanup-row"><button type="button" onclick="cleanUpStoryText()">Clean Up Text</button></p>
+<hr class="save-divider">
+<p>
+<button type="button" onclick="readStoryAloud()">Read it aloud</button>
+<button type="button" onclick="clearStoryForm()">Clear form</button>
+<button type="button" class="danger" id="deleteStoryBtn" onclick="deleteCurrentStory()" style="display:none">Delete this story</button>
+<button type="button" class="primary" onclick="saveStory()">Save this story</button>
+</p>
+<p class="status" id="storySaveStatus" role="status"></p>
+</div>
+<div id="storyIndexWrap" style="display:none">
+<h3>Stories</h3>
+<div id="storyList"></div>
+</div>
+</section>
+
+<!-- PAPER GRID -->
+<section class="card" id="viewGrid" style="display:none">
+
+<p>Tap "Add a note for this day" on a blank day, or "Open this day" on a day that has a note, to record or edit it in full. Or edit right here: tap a dot to change its colour, tap a note to edit its words, or tap a Wake or Bed time to change it.</p>
+<div id="gridStickyHead"><table class="papergrid"><thead><tr><th class="datecell">Date</th><th class="weekcell">Day</th><th class="notecell">Note — what happened</th><th class="wakecell">Wake</th><th class="bedcell">Bed</th><th class="weathercell">Weather / Sun</th></tr></thead></table></div>
+<div id="gridFixedHead"><table class="papergrid"><thead><tr><th class="datecell">Date</th><th class="weekcell">Day</th><th class="notecell">Note — what happened</th><th class="wakecell">Wake</th><th class="bedcell">Bed</th><th class="weathercell">Weather / Sun</th></tr></thead></table></div>
+<div class="gridwrap" id="gridTable"></div>
+</section>
+
+<!-- HELP -->
+<section class="card" id="viewHelp" style="display:none">
+<p><strong>To use it every day:</strong> Open this file in Chrome or Edge on a computer, tablet or phone. On a phone, use Share, then Add to Home Screen, so it opens like an app with one tap. Text Smaller and Text Bigger at the top right change the print size.</p>
+<p><strong>Voice:</strong> Voice typing works best in Chrome or Edge. If the microphone button says it is not supported, type or dictate with your device keyboard instead — the big text box still works.</p>
+<p><strong>Record today:</strong> Tap "Click to Record" and speak, or type in the big text box. Pick how the day was, tap any topics and people, and set the day, the time of the note, and Wake and Bed times if you know them. Tap "Save this entry" — Wake and Bed are saved with the entry. While editing an entry you can delete it, and on a day with more than one note you can switch between them. When a day already has a note, the record button reads "Click to add to existing note" and a second button, "Add new note for the same day", appears beside it.</p>
+<p><strong>How was the day?</strong> In order — Good Day, Getting by, Tough day, Hard/Pain. If you tap Hard/Pain, the hospital faces pain scale pops up so you can tap a face from 0 (No Hurt) to 10 (Hurts Worst) for that entry.</p>
+<p><strong>Journal View:</strong> The month as an open notebook — two pages side by side, a large day number and month at the top of each page, the weekday, ruled lines, your entries, Wake, Bed and Sleep, and weather, with the week number at the foot of each page. The heading is simply the month itself, for example November 2026. Use Previous, Today and Next to move between months. Tap any day to record or edit it; a blank day shows only an "Add a note for this day" button.</p>
+<p><strong>Grid View:</strong> The same notes laid out like his paper page — date, weekday, note (with its mood dot at the start, and each note's time), Wake, Bed, Weather / Sun, one row for every day, with all entered months shown one after another separated by a horizontal month divider, at full browser width. Tap "Add a note for this day" on a blank day, or "Open this day" on a day that has a note, to record or edit it in full — or edit right here: tap a dot to change the mood, tap a note to edit its words, or tap a Wake or Bed time to change it.</p>
+<p><strong>Dashboard:</strong> A one-page summary — totals, mood counts, topics, who entries were about, wake/bed/sleep averages, weather averages, and every entry in that period. Choose This Month, Last Month, Pick a Month, All Time, or One Year to look at one period, or Compare Months to see two months side by side. Tap a topic to see its days. Print sits on the Dashboard title row, so it is always in reach.</p>
+<p><strong>Stories:</strong> Life stories, in your own words. Start the recording with a title — the first sentence you say or type becomes the title in the Index. Each finished sentence saves itself, so there is no need to press Save. Say "Paragraph" while recording to start a new paragraph, and "Stop recording" to stop. When the recording stops, a title box appears under the story — type a title there, or tap "Record Title" beside it to say the title instead, and the title saves itself when that recording stops. "Save this story" saves the story and any typed title together, or leave it blank. The title goes on the first line, with a blank line under it, and the words you recorded stay exactly as they were. "Clean Up Text" tidies the sentences: it drops a leading "And" from each one, capitalises the start of every sentence, and fixes a lone "i" to "I". Tap "View Index" in the Stories title bar to see all the titles, newest first; tap a title there to change it — the new title goes on the first line, with a blank line under it, and the words you recorded stay exactly as they were. Use the View, Edit and Delete buttons beside a title to read it, change it, or remove it.</p>
+<p><strong>Weather:</strong> Toronto weather is fetched and saved automatically when you open a day, Journal View, or Grid View (needs internet). It shows in Journal View, Grid View, and Dashboard.</p>
+<p><strong>Backup:</strong> This log lives only in this browser on this device. Export a backup now and then, and keep the file somewhere safe. The backup includes notes, wake/bed times, saved weather, any topics or people you added, and stories. Older backups with notes only still import.</p>
+<p>
+<button type="button" class="primary" onclick="exportJSON()">Export backup file</button>
+<button type="button" onclick="document.getElementById('importFile').click()">Import backup file</button>
+<input type="file" id="importFile" accept=".json,application/json" style="display:none" onchange="importJSON(event)">
+</p>
+<p class="small">If you switch devices, import the backup file on the new device. Nothing is uploaded to the internet by this page.</p>
+<p>
+<button type="button" class="danger" onclick="openClearDataModal()">Delete all Data</button>
+</p>
+</section>
+</main>
+<footer class="small">Wally's Log — V163 — large print, voice-first, private to this device.</footer>
+
+<div id="datePickerOverlay" class="picker-overlay" style="display:none" role="dialog" aria-modal="true" aria-label="Pick a day">
+<div class="picker-card">
+<h3 id="datePickerTitle">Pick a day</h3>
+<div class="month-nav">
+<button type="button" onclick="changePickerMonth(-1)">◀ Previous month</button>
+<button type="button" onclick="pickToday()">Today</button>
+<button type="button" onclick="changePickerMonth(1)">Next month ▶</button>
+</div>
+<div class="cal-grid" id="datePickerGrid"></div>
+<p><button type="button" onclick="closeDatePicker()">Close without changing</button></p>
+</div>
+</div>
+
+<div id="timePickerOverlay" class="picker-overlay" style="display:none" role="dialog" aria-modal="true" aria-label="Pick a time">
+<div class="picker-card">
+<h3 id="timePickerTitle">Pick a time</h3>
+<div class="time-picker-columns">
+<div class="time-section"><p><strong>Hour</strong></p><div class="time-grid" id="timeHourGrid"></div></div>
+<div class="time-section"><p><strong>Minute</strong></p><div class="time-grid" id="timeMinGrid"></div></div>
+<div class="time-section"><p><strong>AM or PM</strong></p><div class="time-grid" id="timeAmPmGrid"></div></div>
+</div>
+<p class="time-actions"><button type="button" onclick="closeTimePicker()">Close without changing</button> <button type="button" onclick="clearTimePicker()">Clear time</button> <button type="button" class="primary" onclick="confirmTimePicker()">Done</button></p>
+</div>
+</div>
+
+<div id="monthPickerOverlay" class="picker-overlay" style="display:none" role="dialog" aria-modal="true" aria-label="Pick a month">
+<div class="picker-card">
+<h3 id="monthPickerTitle">Pick a month</h3>
+<div class="month-nav" id="monthPickerNav">
+<button type="button" onclick="changePickerYear(-1)">◀ Previous year</button>
+<button type="button" onclick="changePickerYear(1)">Next year ▶</button>
+</div>
+<div class="month-grid" id="monthPickerGrid"></div>
+<p><button type="button" onclick="closeMonthPicker()">Close without changing</button></p>
+</div>
+</div>
+
+
+<div id="yearPickerOverlay" class="picker-overlay" style="display:none" role="dialog" aria-modal="true" aria-label="Pick a year">
+<div class="picker-card">
+<h3 id="yearPickerTitle">Pick a year</h3>
+<div class="month-grid" id="yearPickerGrid"></div>
+<p><button type="button" onclick="closeYearPicker()">Close without changing</button></p>
+</div>
+</div>
+
+<div id="painPickerOverlay" class="picker-overlay" style="display:none" role="dialog" aria-modal="true" aria-label="Pick a pain level">
+<div class="picker-card">
+<h3>How much does it hurt?</h3>
+<p>This is the Wong-Baker FACES pain scale, the faces scale used in hospitals. Tap the face that matches how much it hurts.</p>
+<div class="pain-grid" id="painGrid"></div>
+<p><button type="button" onclick="clearPainLevel()">No pain level</button> <button type="button" onclick="closePainPicker()">Close without choosing</button></p>
+</div>
+</div>
+
+<div id="moodPickerOverlay" class="picker-overlay" style="display:none" role="dialog" aria-modal="true" aria-label="Pick a colour">
+<div class="picker-card">
+<h3>How was the day?</h3>
+<p>Tap a dot to set the colour for this note.</p>
+<div class="moods">
+<button type="button" class="mood" onclick="setGridMood('green')"><span class="dot green"></span>Good Day</button>
+<button type="button" class="mood" onclick="setGridMood('yellow')"><span class="dot yellow"></span>Getting by</button>
+<button type="button" class="mood" onclick="setGridMood('blue')"><span class="dot blue"></span>Tough day</button>
+<button type="button" class="mood" onclick="setGridMood('red')"><span class="dot red"></span>Hard/Pain</button>
+</div>
+<p><button type="button" onclick="closeMoodPicker()">Close without changing</button></p>
+</div>
+</div>
+
+<div id="addTagOverlay" class="picker-overlay" style="display:none" role="dialog" aria-modal="true" aria-label="Add a new tag">
+<div class="picker-card">
+<h3 id="addTagTitle">Add a new tag</h3>
+<p id="addTagHelp">Type the new tag, then tap Add tag. It will be added to the buttons and saved for future entries.</p>
+<p><input type="text" id="addTagInput" style="width:100%;font-size:calc(24px * var(--scale));padding:14px" placeholder="New tag"></p>
+<p><button type="button" class="primary" id="addTagConfirmBtn" onclick="confirmAddTag()">Add tag</button> <button type="button" onclick="closeAddTag()">Cancel</button></p>
+</div>
+</div>
+
+<div id="clearDataModal" class="picker-overlay" style="display:none" role="dialog" aria-modal="true" aria-label="Delete all data">
+<div class="picker-card">
+<h3>Delete all entries?</h3>
+<p>This cannot be undone.</p>
+<p class="unsaved-row"><button type="button" onclick="hideClearDataModal()">Cancel</button> <button type="button" class="danger" onclick="confirmClearData()">OK</button></p>
+</div>
+</div>
+
+<div id="unsavedModal" class="picker-overlay" style="display:none" role="dialog" aria-modal="true" aria-label="Unsaved changes">
+<div class="picker-card">
+<h3>Not saved yet</h3>
+<p id="unsavedText">You have changes that are not saved yet. Save them before you leave?</p>
+<p class="unsaved-row"><button type="button" onclick="unsavedDiscard()">Leave without saving</button> <button type="button" onclick="unsavedKeep()">Keep editing</button> <button type="button" class="primary" onclick="unsavedSave()">Save this entry</button></p>
+</div>
+</div>
+<div id="tlTooltip" role="tooltip"></div>
+
+<script>
+var KEY = 'wallyHealthLog_v1';
+var DAYMETA_KEY = 'wallyHealthLog_dayMeta_v1';
+var SYMPTOMS = ['Good / joyful','Low energy','Trouble exercising','Leg trouble','Pain or discomfort','Low mood / cranky','Anxious','Restless night / poor sleep','Trouble finding words','Struggling to stay positive','Doctor appointment','Routine / daily tasks'];
+var MOOD_LABEL = {blue:'Tough day', green:'Good Day', yellow:'Getting by', red:'Hard/Pain'};
+var PEOPLE = ['Me','Barbara','Bev','Chris','Val','Guy'];
+var PEOPLE_FULL = {Me:'Me', Barbara:'Barbara', Bev:'Bev', Chris:'Chris', Val:'Val', Guy:'Guy'};
+var PEOPLE_PATTERNS = {Barbara:/\bbarbara\b/i, Bev:/\bbev\b|\bbeverly\b/i, Chris:/\bchris\b|\bchristine\b/i, Val:/\bval\b|\bvalerie\b/i, Guy:/\bguy\b/i};
+var CUSTOM_SYMPTOM_KEY = 'wallyHealthLog_customSymptoms';
+var CUSTOM_PEOPLE_KEY = 'wallyHealthLog_customPeople';
+var customSymptoms = [];
+var customPeople = [];
+function addPersonToLists(p){
+  if(PEOPLE.indexOf(p)<0) PEOPLE.push(p);
+  PEOPLE_FULL[p]=p;
+  if(!PEOPLE_PATTERNS[p]) PEOPLE_PATTERNS[p]=new RegExp('\\b'+p.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b','i');
+}
+function loadCustomTags(){
+  try{ var cs=JSON.parse(localStorage.getItem(CUSTOM_SYMPTOM_KEY)||'[]'); if(Array.isArray(cs)) customSymptoms=cs; }catch(e){ customSymptoms=[]; }
+  customSymptoms.forEach(function(s){ if(SYMPTOMS.indexOf(s)<0) SYMPTOMS.push(s); });
+  try{ var cp=JSON.parse(localStorage.getItem(CUSTOM_PEOPLE_KEY)||'[]'); if(Array.isArray(cp)) customPeople=cp; }catch(e){ customPeople=[]; }
+  customPeople.forEach(function(p){ addPersonToLists(p); });
+}
+function saveCustomTags(){
+  try{ localStorage.setItem(CUSTOM_SYMPTOM_KEY, JSON.stringify(customSymptoms)); localStorage.setItem(CUSTOM_PEOPLE_KEY, JSON.stringify(customPeople)); }catch(e){}
+}
+loadCustomTags();
+var selectedMood = '';
+var selectedSymptoms = [];
+var selectedPeople = [];
+var editingId = null;
+var recognition = null;
+var listening = false;
+var voiceFatal = false;
+var voiceStarted = false;
+var voicePendingStart = false;
+var voiceHadError = false;
+var voiceSession = 0;
+var finalText = '';
+
+function seedData(){
+  return [];
+}
+function load(){
+  try{
+    var raw = localStorage.getItem(KEY);
+    if(raw){ return JSON.parse(raw); }
+  }catch(e){}
+  var d = seedData();
+  save(d);
+  return d;
+}
+function save(d){ try{ localStorage.setItem(KEY, JSON.stringify(d)); }catch(e){} }
+var SEED_DAY_META = {};
+var CLEARED_KEY = 'wallyHealthLog_cleared';
+var WEATHER_RESTORED_KEY = 'wallyHealthLog_weatherRestored';
+function loadDayMeta(){
+  var out = {};
+  var cleared = false;
+  try{ cleared = !!localStorage.getItem(CLEARED_KEY); }catch(e){}
+  if(!cleared){ Object.keys(SEED_DAY_META).forEach(function(d){ out[d] = {wake:SEED_DAY_META[d].wake, bed:SEED_DAY_META[d].bed}; }); }
+  try{ var raw = localStorage.getItem(DAYMETA_KEY); if(raw){ var stored = JSON.parse(raw); Object.keys(stored).forEach(function(d){
+    if(!out[d]) out[d] = {};
+    // Field-level merge: a stored record must not wipe the seed. Old weather-only
+    // records (weather, no wake/bed) used to replace the whole seed day, which is
+    // why paper wake/bed vanished from the grid. Stored wake/bed/weather win when
+    // present (including an explicit '' clear); missing fields fall back to seed.
+    Object.keys(stored[d] || {}).forEach(function(k){ if(stored[d][k] !== undefined) out[d][k] = stored[d][k]; });
+  }); } }catch(e){}
+  return out;
+}
+function saveDayMeta(m){ try{ localStorage.setItem(DAYMETA_KEY, JSON.stringify(m)); }catch(e){} }
+function loadWakeBedForCurrentDate(){
+  var date = document.getElementById('entryDate').value;
+  var meta = loadDayMeta()[date] || {};
+  document.getElementById('wakeTime').value = meta.wake || '';
+  document.getElementById('bedTime').value = meta.bed || '';
+  syncTimeDisplays();
+}
+function saveWakeBedForCurrentDate(){
+  var date = document.getElementById('entryDate').value;
+  if(!date) return false;
+  var wake = document.getElementById('wakeTime').value;
+  var bed = document.getElementById('bedTime').value;
+  var meta = loadDayMeta();
+  if(!wake && !bed){
+    if(meta[date]){ delete meta[date].wake; delete meta[date].bed; if(!meta[date].weather) delete meta[date]; }
+  } else {
+    if(!meta[date]) meta[date] = {};
+    meta[date].wake = wake; meta[date].bed = bed;
+  }
+  saveDayMeta(meta);
+  return true;
+}
+function timeToMinutes(t){
+  if(!t) return null;
+  var p = t.split(':');
+  return Number(p[0])*60 + Number(p[1]);
+}
+function fmtMinutes(min){
+  if(min===null || min===undefined) return '—';
+  var h = Math.floor(min/60), m = Math.round(min%60);
+  return h+'h '+String(m).padStart(2,'0')+'m';
+}
+function fmtClock(min){
+  if(min===null || min===undefined) return '—';
+  var total = ((Math.round(min)%1440)+1440)%1440;
+  return String(Math.floor(total/60)).padStart(2,'0')+':'+String(total%60).padStart(2,'0');
+}
+function prevISO(iso){
+  var p = iso.split('-');
+  var d = new Date(Number(p[0]), Number(p[1])-1, Number(p[2])-1);
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+var TORONTO_LAT = 43.6532, TORONTO_LON = -79.3832;
+var currentWeatherForDate = '', currentWeather = null;
+function sunTimes(iso){
+  var p = iso.split('-');
+  var y = Number(p[0]), mo = Number(p[1]), d = Number(p[2]);
+  var utcNoon = Date.UTC(y, mo-1, d, 12, 0, 0);
+  var julianDay = utcNoon/86400000 + 2440587.5;
+  var T = (julianDay - 2451545.0)/36525.0;
+  function rad(x){ return x*Math.PI/180; }
+  function deg(x){ return x*180/Math.PI; }
+  function norm360(x){ x = x % 360; return x < 0 ? x+360 : x; }
+  var L0 = norm360(280.46646 + T*(36000.76983 + T*0.0003032));
+  var M = 357.52911 + T*(35999.05029 - T*0.0001537);
+  var e = 0.016708634 - T*(0.000042037 + T*0.0000001267);
+  var C = Math.sin(rad(M))*(1.914602 - T*(0.004817 + 0.000014*T)) + Math.sin(rad(2*M))*(0.019993 - 0.000101*T) + Math.sin(rad(3*M))*0.000289;
+  var trueLong = L0 + C;
+  var omega = 125.04 - 1934.136*T;
+  var lambda = trueLong - 0.00569 - 0.00478*Math.sin(rad(omega));
+  var eps0 = 23 + (26 + ((21.448 - T*(46.815 + T*(0.00059 - T*0.001813))))/60)/60;
+  var eps = eps0 + 0.00256*Math.cos(rad(omega));
+  var decl = deg(Math.asin(Math.sin(rad(eps))*Math.sin(rad(lambda))));
+  var varY = Math.pow(Math.tan(rad(eps/2)), 2);
+  var eqTime = 4*deg(varY*Math.sin(rad(2*L0)) - 2*e*Math.sin(rad(M)) + 4*e*varY*Math.sin(rad(M))*Math.cos(rad(2*L0)) - 0.5*varY*varY*Math.sin(rad(4*L0)) - 1.25*e*e*Math.sin(rad(2*M)));
+  var cosHA = (Math.cos(rad(90.833)) - Math.sin(rad(TORONTO_LAT))*Math.sin(rad(decl))) / (Math.cos(rad(TORONTO_LAT))*Math.cos(rad(decl)));
+  if(cosHA > 1 || cosHA < -1) return {sunrise:null, sunset:null, daylightMinutes:null};
+  var ha = deg(Math.acos(cosHA));
+  var solarNoonMin = 720 - 4*TORONTO_LON - eqTime;
+  var riseMin = solarNoonMin - ha*4, setMin = solarNoonMin + ha*4;
+  var base = Date.UTC(y, mo-1, d, 0, 0, 0);
+  return {sunrise:new Date(base + riseMin*60000), sunset:new Date(base + setMin*60000), daylightMinutes:Math.round(setMin-riseMin)};
+}
+function fmtTorontoTime(dt){
+  if(!dt) return '—';
+  try{ return new Intl.DateTimeFormat('en-CA',{timeZone:'America/Toronto', hour:'2-digit', minute:'2-digit', hour12:false}).format(dt); }
+  catch(e){ return dt.toISOString().slice(11,16); }
+}
+function moonInfo(iso){
+  var p = iso.split('-');
+  var dt = Date.UTC(Number(p[0]), Number(p[1])-1, Number(p[2]), 12, 0, 0);
+  var synodic = 29.530588853, known = Date.UTC(2000,0,6,18,14,0);
+  var age = ((dt-known)/86400000) % synodic; if(age < 0) age += synodic;
+  var names = ['New Moon','Waxing Crescent','First Quarter','Waxing Gibbous','Full Moon','Waning Gibbous','Last Quarter','Waning Crescent'];
+  var icons = ['🌑','🌒','🌓','🌔','🌕','🌖','🌗','🌘'];
+  var idx = Math.floor((age/synodic)*8 + 0.5) % 8;
+  var illum = (1 - Math.cos(2*Math.PI*age/synodic))/2;
+  return {phase:names[idx], icon:icons[idx], illum:Math.round(illum*100), age:age};
+}
+function weatherCodeText(code){
+  var map = {0:'Clear sky',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',45:'Fog',48:'Depositing rime fog',51:'Light drizzle',53:'Drizzle',55:'Dense drizzle',56:'Light freezing drizzle',57:'Dense freezing drizzle',61:'Slight rain',63:'Rain',65:'Heavy rain',66:'Light freezing rain',67:'Heavy freezing rain',71:'Slight snow',73:'Snow',75:'Heavy snow',77:'Snow grains',80:'Slight rain showers',81:'Rain showers',82:'Violent rain showers',85:'Slight snow showers',86:'Heavy snow showers',95:'Thunderstorm',96:'Thunderstorm with slight hail',99:'Thunderstorm with heavy hail'};
+  return map[code] || 'Weather code '+code;
+}
+var SUNRISE_ICON = '<svg class="sun-icon" viewBox="0 0 120 80" role="img" aria-label="Sunrise"><path d="M102.8,71.7 L126.0,68.0 L102.8,64.3 Z" fill="#f2b705"/><path d="M102.3,60.5 L118.0,52.5 L100.4,53.3 Z" fill="#f2b705"/><path d="M99.0,49.8 L117.2,35.0 L95.2,43.3 Z" fill="#f2b705"/><path d="M92.9,40.4 L102.4,25.6 L87.6,35.1 Z" fill="#f2b705"/><path d="M84.7,32.8 L93.0,10.8 L78.2,29.0 Z" fill="#f2b705"/><path d="M74.7,27.6 L75.5,10.0 L67.5,25.7 Z" fill="#f2b705"/><path d="M63.7,25.2 L60.0,2.0 L56.3,25.2 Z" fill="#f2b705"/><path d="M52.5,25.7 L44.5,10.0 L45.3,27.6 Z" fill="#f2b705"/><path d="M41.8,29.0 L27.0,10.8 L35.3,32.8 Z" fill="#f2b705"/><path d="M32.4,35.1 L17.6,25.6 L27.1,40.4 Z" fill="#f2b705"/><path d="M24.8,43.3 L2.8,35.0 L21.0,49.8 Z" fill="#f2b705"/><path d="M19.6,53.3 L2.0,52.5 L17.7,60.5 Z" fill="#f2b705"/><path d="M17.2,64.3 L-6.0,68.0 L17.2,71.7 Z" fill="#f2b705"/><path d="M20,68 A40,40 0 0 1 100,68 Z" fill="#e86a5a"/><rect x="5" y="68" width="110" height="10" rx="5" fill="#22344d"/><path d="M60,32 L42,52 L54,52 L54,66 L66,66 L66,52 L78,52 Z" fill="#ffffff"/></svg>';
+var SUNSET_ICON = '<svg class="sun-icon" viewBox="0 0 120 80" role="img" aria-label="Sunset"><path d="M102.8,71.7 L126.0,68.0 L102.8,64.3 Z" fill="#f2b705"/><path d="M102.3,60.5 L118.0,52.5 L100.4,53.3 Z" fill="#f2b705"/><path d="M99.0,49.8 L117.2,35.0 L95.2,43.3 Z" fill="#f2b705"/><path d="M92.9,40.4 L102.4,25.6 L87.6,35.1 Z" fill="#f2b705"/><path d="M84.7,32.8 L93.0,10.8 L78.2,29.0 Z" fill="#f2b705"/><path d="M74.7,27.6 L75.5,10.0 L67.5,25.7 Z" fill="#f2b705"/><path d="M63.7,25.2 L60.0,2.0 L56.3,25.2 Z" fill="#f2b705"/><path d="M52.5,25.7 L44.5,10.0 L45.3,27.6 Z" fill="#f2b705"/><path d="M41.8,29.0 L27.0,10.8 L35.3,32.8 Z" fill="#f2b705"/><path d="M32.4,35.1 L17.6,25.6 L27.1,40.4 Z" fill="#f2b705"/><path d="M24.8,43.3 L2.8,35.0 L21.0,49.8 Z" fill="#f2b705"/><path d="M19.6,53.3 L2.0,52.5 L17.7,60.5 Z" fill="#f2b705"/><path d="M17.2,64.3 L-6.0,68.0 L17.2,71.7 Z" fill="#f2b705"/><path d="M20,68 A40,40 0 0 1 100,68 Z" fill="#e86a5a"/><rect x="5" y="68" width="110" height="10" rx="5" fill="#22344d"/><path d="M54,32 L66,32 L66,50 L78,50 L60,68 L42,50 L54,50 Z" fill="#ffffff"/></svg>';
+function renderWeatherCard(){
+  var date = document.getElementById('entryDate').value;
+  var box = document.getElementById('weatherCard');
+  if(!box) return;
+  if(!date){ box.innerHTML='<p>Pick a day first.</p>'; return; }
+  var sun = sunTimes(date), moon = moonInfo(date);
+  var meta = loadDayMeta()[date] || {};
+  var saved = meta.weather || null;
+  var w = saved || (currentWeatherForDate===date ? currentWeather : null);
+  var html = '<p><strong>Toronto, Canada — '+esc(fmtDate(date))+'</strong></p>';
+  html += '<p>'+SUNRISE_ICON+' Sunrise <strong>'+esc(fmtTorontoTime(sun.sunrise))+'</strong> &nbsp; '+SUNSET_ICON+' Sunset <strong>'+esc(fmtTorontoTime(sun.sunset))+'</strong> &nbsp; Daylight <strong>'+esc(fmtMinutes(sun.daylightMinutes))+'</strong></p>';
+  html += '<p>Moon: '+moon.icon+' <strong>'+esc(moon.phase)+'</strong> ('+moon.illum+'% lit)</p>';
+  if(w){
+    html += '<p>Weather: <strong>'+esc(w.condition)+'</strong> &nbsp; High '+esc(w.high)+'°C &nbsp; Low '+esc(w.low)+'°C'+(w.precip!==null && w.precip!==undefined ? ' &nbsp; Precipitation '+esc(w.precip)+' mm' : '')+(w.pressure!==null && w.pressure!==undefined ? ' &nbsp; Pressure '+esc(Math.round(w.pressure))+' hPa' : '')+(saved ? '' : ' &nbsp; <em>Fetched, not yet saved.</em>')+'</p>';
+  } else {
+    html += '<p>Weather: not yet saved for this day. It is fetched automatically when you open the day (needs internet).</p>';
+  }
+  box.innerHTML = html;
+}
+var fetchedMonths = {}, fetchingMonths = {}, autoFetchingDays = {};
+function saveWeatherForDate(date, w){
+  var meta = loadDayMeta();
+  var before = meta[date] && meta[date].weather;
+  if(before && before.condition===w.condition && String(before.high)===String(w.high) && String(before.low)===String(w.low) && String(before.precip)===String(w.precip) && String(before.pressure)===String(w.pressure)) return false;
+  var sun = sunTimes(date), moon = moonInfo(date);
+  if(!meta[date]) meta[date] = {};
+  meta[date].weather = {condition:w.condition, code:w.code, high:w.high, low:w.low, precip:w.precip, pressure:w.pressure, sunrise:fmtTorontoTime(sun.sunrise), sunset:fmtTorontoTime(sun.sunset), daylightMinutes:sun.daylightMinutes, moonPhase:moon.phase, moonIcon:moon.icon, moonIllum:moon.illum};
+  saveDayMeta(meta);
+  return true;
+}
+function meanPressureByDay(j){
+  var out = {};
+  if(!j || !j.hourly || !j.hourly.time || !j.hourly.pressure_msl) return out;
+  var sums = {};
+  j.hourly.time.forEach(function(tm, i){
+    var v = j.hourly.pressure_msl[i];
+    if(v===null || v===undefined) return;
+    var d = tm.slice(0,10);
+    if(!sums[d]) sums[d] = {sum:0, n:0};
+    sums[d].sum += v; sums[d].n++;
+  });
+  Object.keys(sums).forEach(function(d){ if(sums[d].n) out[d] = sums[d].sum / sums[d].n; });
+  return out;
+}
+function fetchDayWeather(date, opts){
+  opts = opts || {};
+  if(!date || typeof fetch === 'undefined') return;
+  if(!opts.force){
+    var existing = loadDayMeta()[date] && loadDayMeta()[date].weather;
+    if(existing && existing.pressure!==undefined && existing.pressure!==null) return;
+  }
+  if(autoFetchingDays[date]) return;
+  autoFetchingDays[date] = true;
+  var today = todayISO();
+  var base = date <= today ? 'https://archive-api.open-meteo.com/v1/archive' : 'https://api.open-meteo.com/v1/forecast';
+  var dailyUrl = base+'?latitude=43.6532&longitude=-79.3832&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=America%2FToronto&start_date='+date+'&end_date='+date;
+  var hourlyUrl = base+'?latitude=43.6532&longitude=-79.3832&hourly=pressure_msl&timezone=America%2FToronto&start_date='+date+'&end_date='+date;
+  var hourlyP = fetch(hourlyUrl).then(function(r){ return r.json(); }).then(function(hj){ return meanPressureByDay(hj)[date] || null; }).catch(function(){ return null; });
+  fetch(dailyUrl).then(function(r){ return r.json(); }).then(function(j){
+    if(!j || j.error || !j.daily || !j.daily.time || !j.daily.time.length) throw new Error('no data');
+    var ex = loadDayMeta()[date] && loadDayMeta()[date].weather;
+    var w = {condition:weatherCodeText(j.daily.weather_code[0]), code:j.daily.weather_code[0], high:j.daily.temperature_2m_max[0], low:j.daily.temperature_2m_min[0], precip:j.daily.precipitation_sum[0], pressure:((ex && ex.pressure!==null && ex.pressure!==undefined) ? ex.pressure : null)};
+    currentWeatherForDate = date; currentWeather = w;
+    saveWeatherForDate(date, w);
+    if(opts.onDone) opts.onDone(w);
+    renderWeatherCard();
+    return hourlyP.then(function(pr){
+      if(pr!==null && pr!==undefined && pr!==w.pressure){
+        w.pressure = pr; currentWeather = w; saveWeatherForDate(date, w); renderWeatherCard();
+      }
+    });
+  }).then(function(){
+    delete autoFetchingDays[date];
+  }).catch(function(){
+    delete autoFetchingDays[date];
+    if(opts.onFail) opts.onFail();
+  });
+}
+function autoFetchDayWeather(date){
+  fetchDayWeather(date, {});
+}
+function monthFetchable(ym){
+  var h = new Date(); h.setDate(h.getDate()+16);
+  var hm = h.getFullYear()+'-'+String(h.getMonth()+1).padStart(2,'0');
+  return ym <= hm;
+}
+function repopulateWeatherAfterDelete(){
+  var cleared = false, restored = false;
+  try{ cleared = !!localStorage.getItem(CLEARED_KEY); }catch(e){}
+  try{ restored = !!localStorage.getItem(WEATHER_RESTORED_KEY); }catch(e){}
+  if(!cleared || restored) return;
+  try{ localStorage.setItem(WEATHER_RESTORED_KEY, '1'); }catch(e){}
+  var tym = todayISO().slice(0,7);
+  for(var i=-12; i<=12; i++){
+    var gm = shiftMonth(tym, i);
+    if(monthFetchable(gm)) fetchMonthWeather(gm);
+  }
+}
+var gridWeatherRerenderTimer = null;
+function scheduleGridWeatherRerender(){
+  if(gridWeatherRerenderTimer) return;
+  gridWeatherRerenderTimer = setTimeout(function(){ gridWeatherRerenderTimer = null; if(document.getElementById('viewGrid').style.display==='block') renderGrid(); }, 500);
+}
+function fetchMonthWeather(ym){
+  if(!ym || typeof fetch === 'undefined' || fetchedMonths[ym] || fetchingMonths[ym]) return;
+  fetchingMonths[ym] = true;
+  var p = ym.split('-'), y = Number(p[0]), m = Number(p[1]);
+  var days = new Date(y, m, 0).getDate();
+  var start = ym+'-01', end = ym+'-'+String(days).padStart(2,'0');
+  var today = todayISO(), yesterday = prevISO(today);
+  var ranges = [];
+  if(start <= yesterday) ranges.push({base:'https://archive-api.open-meteo.com/v1/archive', s:start, e:(end<=yesterday?end:yesterday)});
+  if(end >= today) ranges.push({base:'https://api.open-meteo.com/v1/forecast', s:(start>=today?start:today), e:end});
+  if(!ranges.length){ delete fetchingMonths[ym]; fetchedMonths[ym] = true; return; }
+  var done = 0, changed = false, failed = false;
+  ranges.forEach(function(r){
+    var dailyUrl = r.base+'?latitude=43.6532&longitude=-79.3832&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=America%2FToronto&start_date='+r.s+'&end_date='+r.e;
+    var hourlyUrl = r.base+'?latitude=43.6532&longitude=-79.3832&hourly=pressure_msl&timezone=America%2FToronto&start_date='+r.s+'&end_date='+r.e;
+    var hourlyP = fetch(hourlyUrl).then(function(resp){ return resp.json(); }).then(function(hj){ return meanPressureByDay(hj); }).catch(function(){ return {}; });
+    fetch(dailyUrl).then(function(resp){ return resp.json(); }).then(function(j){
+      if(!j || j.error) { failed = true; return; }
+      return hourlyP.then(function(pressMap){
+        if(j && j.daily && j.daily.time){
+          j.daily.time.forEach(function(d, i){
+            var ex = loadDayMeta()[d] && loadDayMeta()[d].weather;
+            var pr = pressMap[d];
+            if((pr===null || pr===undefined) && ex && ex.pressure!==null && ex.pressure!==undefined) pr = ex.pressure;
+            var w = {condition:weatherCodeText(j.daily.weather_code[i]), code:j.daily.weather_code[i], high:j.daily.temperature_2m_max[i], low:j.daily.temperature_2m_min[i], precip:j.daily.precipitation_sum[i], pressure:((pr!==undefined) ? pr : null)};
+            if(saveWeatherForDate(d, w)) changed = true;
+          });
+        }
+      });
+    }).catch(function(){ failed = true; }).then(function(){
+      done++;
+      if(done===ranges.length){
+        delete fetchingMonths[ym];
+        if(!failed) fetchedMonths[ym] = true;
+        if(changed){
+          if(document.getElementById('viewMonth').style.display==='block'){ renderMonth(); scrollToTodaySpread(); }
+          if(document.getElementById('viewGrid').style.display==='block') scheduleGridWeatherRerender();
+        }
+      }
+    });
+  });
+}
+function esc(s){ return String(s===null || s===undefined ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function todayISO(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function fmtDate(iso){
+  if(!iso) return '';
+  var p = iso.split('-');
+  var d = new Date(Number(p[0]), Number(p[1])-1, Number(p[2]));
+  return d.toLocaleDateString(undefined,{weekday:'short', year:'numeric', month:'short', day:'numeric'});
+}
+function changeScale(delta){
+  var root = document.documentElement;
+  var cur = parseFloat(getComputedStyle(root).getPropertyValue('--scale')) || 1;
+  var next = Math.min(1.6, Math.max(0.8, cur + delta));
+  root.style.setProperty('--scale', next);
+  try{ localStorage.setItem('wallyHealthLog_scale', String(next)); }catch(e){}
+  updateGridFixedHead();
+}
+function fmtTime12(hhmm){
+  if(!hhmm) return '';
+  var parts = hhmm.split(':');
+  var h = Number(parts[0]), m = parts[1];
+  var ampm = h >= 12 ? 'PM' : 'AM';
+  var h12 = h % 12; if(h12===0) h12 = 12;
+  return h12+':'+m+' '+ampm;
+}
+function syncDateDisplay(){
+  var v = document.getElementById('entryDate').value;
+  var b = document.getElementById('entryDateBtn'); if(b) b.textContent = v ? '📅 ' + fmtDate(v) : '📅 Pick a day';
+}
+function syncTimeDisplay(id, buttonId){
+  var v = document.getElementById(id).value;
+  var b = document.getElementById(buttonId); if(b) b.textContent = v ? '🕐 ' + fmtTime12(v) : '🕐 Pick a time';
+}
+function syncTimeDisplays(){
+  syncTimeDisplay('entryTime','entryTimeBtn');
+  syncTimeDisplay('wakeTime','wakeTimeBtn');
+  syncTimeDisplay('bedTime','bedTimeBtn');
+}
+function syncMonthDisplay(id, buttonId){
+  var el = document.getElementById(id); if(!el) return;
+  var v = el.value;
+  var b = document.getElementById(buttonId); if(b) b.textContent = v ? '📅 ' + fmtMonthTitle(v) : '📅 Pick month';
+}
+function syncMonthDisplays(){
+  syncMonthDisplay('dashMonth','dashMonthBtn');
+}
+function syncPickerDisplays(){ syncDateDisplay(); syncTimeDisplays(); syncMonthDisplays(); }
+var pickerMonth = '';
+function openDatePicker(){
+  var cur = document.getElementById('entryDate').value || todayISO();
+  pickerMonth = cur.slice(0,7);
+  renderDatePicker();
+  document.getElementById('datePickerOverlay').style.display = 'flex';
+}
+function closeDatePicker(){ document.getElementById('datePickerOverlay').style.display = 'none'; }
+function changePickerMonth(delta){
+  var parts = pickerMonth.split('-');
+  var d = new Date(Number(parts[0]), Number(parts[1])-1+delta, 1);
+  pickerMonth = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+  renderDatePicker();
+}
+function renderDatePicker(){
+  var parts = pickerMonth.split('-');
+  var y = Number(parts[0]), m = Number(parts[1]);
+  document.getElementById('datePickerTitle').textContent = 'Pick a day — '+MONTH_NAMES[m-1]+' '+y;
+  var first = new Date(y, m-1, 1).getDay();
+  var days = new Date(y, m, 0).getDate();
+  var selected = document.getElementById('entryDate').value;
+  var today = todayISO();
+  var html = ['S','M','T','W','T','F','S'].map(function(d){ return '<div class="cal-head">'+d+'</div>'; }).join('');
+  for(var i=0; i<first; i++) html += '<div class="cal-day blank"></div>';
+  for(var d=1; d<=days; d++){
+    var iso = y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    var cls = 'cal-day' + (iso===selected ? ' selected' : '') + (iso===today ? ' today' : '');
+    html += '<button type="button" class="'+cls+'" onclick="applyPickedDate(\''+iso+'\')">'+d+'</button>';
+  }
+  document.getElementById('datePickerGrid').innerHTML = html;
+}
+function applyPickedDate(iso){
+  document.getElementById('entryDate').value = iso;
+  closeDatePicker();
+  clearFormKeepDate(); renderDay(); renderWeatherCard(); syncDateDisplay(); autoFetchDayWeather(iso);
+}
+function pickToday(){ applyPickedDate(todayISO()); }
+var timePickerTarget = '', timePickerHour = null, timePickerMin = 0, timePickerAmPm = 'AM';
+function openTimePicker(target){
+  timePickerTarget = target;
+  var v = document.getElementById(target).value;
+  if(v){
+    var parts = v.split(':');
+    var h = Number(parts[0]);
+    timePickerAmPm = h >= 12 ? 'PM' : 'AM';
+    timePickerHour = h % 12; if(timePickerHour===0) timePickerHour = 12;
+    timePickerMin = Number(parts[1]);
+  } else {
+    var now = new Date();
+    var h24 = now.getHours();
+    var roundedMin = Math.round(now.getMinutes()/5)*5;
+    if(roundedMin===60){ roundedMin = 0; h24 = (h24+1)%24; }
+    timePickerAmPm = h24 >= 12 ? 'PM' : 'AM';
+    if(target==='bedTime') timePickerAmPm = 'PM';
+    timePickerHour = h24 % 12; if(timePickerHour===0) timePickerHour = 12;
+    timePickerMin = roundedMin;
+  }
+  var title = document.getElementById('timePickerTitle');
+  title.textContent = 'Pick a time' + (target==='wakeTime' ? ' — Wake' : target==='bedTime' ? ' — Bed' : ' — This note');
+  renderTimePicker();
+  document.getElementById('timePickerOverlay').style.display = 'flex';
+}
+function renderTimePicker(){
+  var hours = '';
+  for(var h=1; h<=12; h++){ hours += '<button type="button" class="time-btn'+(h===timePickerHour?' selected':'')+'" onclick="setTimeHour('+h+')">'+h+'</button>'; }
+  document.getElementById('timeHourGrid').innerHTML = hours;
+  var mins = '';
+  for(var mi=0; mi<60; mi+=5){ var mm = String(mi).padStart(2,'0'); mins += '<button type="button" class="time-btn'+(mi===timePickerMin?' selected':'')+'" onclick="setTimeMin('+mi+')">'+mm+'</button>'; }
+  document.getElementById('timeMinGrid').innerHTML = mins;
+  document.getElementById('timeAmPmGrid').innerHTML = '<button type="button" class="time-btn'+(timePickerAmPm==='AM'?' selected':'')+'" onclick="setTimeAmPm(\'AM\')">AM</button><button type="button" class="time-btn'+(timePickerAmPm==='PM'?' selected':'')+'" onclick="setTimeAmPm(\'PM\')">PM</button>';
+}
+function setTimeHour(h){ timePickerHour = h; renderTimePicker(); }
+function setTimeMin(mi){ timePickerMin = mi; renderTimePicker(); }
+function setTimeAmPm(a){ timePickerAmPm = a; renderTimePicker(); }
+function closeTimePicker(){ gridTimeEdit = null; document.getElementById('timePickerOverlay').style.display = 'none'; }
+function clearTimePicker(){
+  var ge = gridTimeEdit;
+  document.getElementById(timePickerTarget).value = '';
+  closeTimePicker(); syncTimeDisplays();
+  if(ge){ var meta = loadDayMeta(); if(!meta[ge.date]) meta[ge.date] = {}; meta[ge.date][ge.field==='wakeTime' ? 'wake' : 'bed'] = ''; saveDayMeta(meta); renderGrid(); renderMonth(); }
+}
+function confirmTimePicker(){
+  var h = timePickerHour===null ? 12 : timePickerHour;
+  var h24 = timePickerAmPm==='PM' ? (h===12 ? 12 : h+12) : (h===12 ? 0 : h);
+  var val = String(h24).padStart(2,'0')+':'+String(timePickerMin).padStart(2,'0');
+  var ge = gridTimeEdit;
+  document.getElementById(timePickerTarget).value = val;
+  closeTimePicker(); syncTimeDisplays();
+  if(ge){ var meta = loadDayMeta(); if(!meta[ge.date]) meta[ge.date] = {}; meta[ge.date][ge.field==='wakeTime' ? 'wake' : 'bed'] = val; saveDayMeta(meta); renderGrid(); renderMonth(); }
+}
+var monthPickerTarget = '', monthPickerYear = 0, monthPickerMonthOnly = false;
+function openMonthPicker(target, monthOnly){
+  monthPickerTarget = target;
+  monthPickerMonthOnly = !!monthOnly;
+  var v = document.getElementById(target).value || todayISO().slice(0,7);
+  monthPickerYear = Number(v.split('-')[0]);
+  renderMonthPicker();
+  document.getElementById('monthPickerNav').style.display = monthPickerMonthOnly ? 'none' : '';
+  document.getElementById('monthPickerOverlay').style.display = 'flex';
+}
+var yearPickerTarget = '';
+function openYearPicker(target){
+  yearPickerTarget = target;
+  renderYearPicker();
+  document.getElementById('yearPickerOverlay').style.display = 'flex';
+}
+function closeYearPicker(){ document.getElementById('yearPickerOverlay').style.display = 'none'; }
+function renderYearPicker(){
+  document.getElementById('yearPickerTitle').textContent = 'Pick a year';
+  var cy = new Date().getFullYear();
+  var years = {};
+  load().forEach(function(e){ years[Number(e.date.slice(0,4))] = true; });
+  years[cy] = true; years[cy+1] = true; years[cy+2] = true;
+  for(var yy2=2026; yy2<=2040; yy2++) years[yy2] = true;
+  var list = Object.keys(years).map(Number).sort(function(a,b){ return a-b; });
+  var lo = list[0], hi = list[list.length-1], html = '';
+  for(var y = lo; y <= hi; y++){
+    html += '<button type="button" class="month-btn'+(y===cy?' selected':'')+'" onclick="applyPickedYear('+y+')">'+y+'</button>';
+  }
+  document.getElementById('yearPickerGrid').innerHTML = html;
+}
+function applyPickedYear(y){
+  var cur = document.getElementById(yearPickerTarget).value || todayISO().slice(0,7);
+  document.getElementById(yearPickerTarget).value = y+'-'+cur.split('-')[1];
+  closeYearPicker();
+  if(yearPickerTarget==='patternCompareA' || yearPickerTarget==='patternCompareB') renderSummary();
+}
+function closeMonthPicker(){ document.getElementById('monthPickerOverlay').style.display = 'none'; }
+function changePickerYear(delta){ monthPickerYear += delta; renderMonthPicker(); }
+function renderMonthPicker(){
+  document.getElementById('monthPickerTitle').textContent = 'Pick a month — '+monthPickerYear;
+  var cur = document.getElementById(monthPickerTarget).value;
+  var html = MONTH_NAMES.map(function(name, i){
+    var ym = monthPickerYear+'-'+String(i+1).padStart(2,'0');
+    return '<button type="button" class="month-btn'+(ym===cur?' selected':'')+'" onclick="applyPickedMonth(\''+ym+'\')">'+name+'</button>';
+  }).join('');
+  document.getElementById('monthPickerGrid').innerHTML = html;
+}
+function applyPickedMonth(ym){
+  document.getElementById(monthPickerTarget).value = ym;
+  closeMonthPicker(); syncMonthDisplays();
+  if(monthPickerTarget==='dashMonth') renderSummary();
+  if(monthPickerTarget==='patternCompareA' || monthPickerTarget==='patternCompareB') renderSummary();
+}
+function tabTo(view){
+  if(view !== 'record' && document.getElementById('viewRecord').style.display === 'block' && isRecordDirty()){
+    confirmUnsaved(function(){ showView(view); });
+    return;
+  }
+  showView(view);
+}
+function showView(name){
+  ['record','month','summary','stories','grid','help'].forEach(function(v){
+    document.getElementById('view'+v.charAt(0).toUpperCase()+v.slice(1)).style.display = (v===name) ? 'block' : 'none';
+    document.getElementById('tab'+v.charAt(0).toUpperCase()+v.slice(1)).classList.toggle('active', v===name);
+    document.getElementById('title'+v.charAt(0).toUpperCase()+v.slice(1)).style.display = (v===name) ? 'flex' : 'none';
+  });
+  if(window.scrollTo) window.scrollTo(0, 0);
+  if(name==='month') goToCurrentMonth();
+  if(name==='summary') renderSummary();
+  if(name==='stories'){ showStoryForm(); renderStories(); }
+  if(name==='grid' && !document.getElementById('gridNoteEdit')){
+    gridAnchorYm = todayISO().slice(0,7);
+    renderGrid();
+    var trow = document.querySelector('#gridTable tr[data-iso="'+todayISO()+'"]');
+    if(trow) scrollSpreadBelowHeader(trow, 'auto', gridStickyHeadHeight());
+    updateGridFixedHead();
+  }
+}
+function entryPeople(e){
+  var out = (e.people||[]).slice();
+  var text = e.text||'';
+  PEOPLE.forEach(function(p){
+    if(p==='Me') return;
+    if(out.indexOf(p)<0 && PEOPLE_PATTERNS[p] && PEOPLE_PATTERNS[p].test(text)) out.push(p);
+  });
+  if(out.indexOf('Me')<0){
+    var hasFamily = out.some(function(p){ return p!=='Me'; });
+    if(!hasFamily) out.push('Me');
+  }
+  return out;
+}
+function renderPeopleChips(){
+  var row = document.getElementById('peopleRow');
+  row.innerHTML = '';
+  PEOPLE.forEach(function(p){
+    var b = document.createElement('button');
+    b.type='button'; b.className='chip'+(selectedPeople.indexOf(p)>=0?' selected':''); b.textContent=PEOPLE_FULL[p];
+    b.onclick=function(){
+      var i = selectedPeople.indexOf(p);
+      if(i>=0) selectedPeople.splice(i,1); else selectedPeople.push(p);
+      renderPeopleChips();
+    };
+    row.appendChild(b);
+  });
+  var add = document.createElement('button');
+  add.type='button'; add.className='chip'; add.textContent='+ Add Other';
+  add.onclick=function(){ openAddTag('person'); };
+  row.appendChild(add);
+}
+function goToday(){
+  var todays = load().filter(function(e){ return e.date===todayISO(); }).sort(function(a,b){ return (a.time||'').localeCompare(b.time||''); });
+  if(todays.length){ editEntry(todays[0].id); return; }
+  document.getElementById('entryDate').value = todayISO();
+  clearFormKeepDate();
+  showView('record');
+  renderDay(); renderWeatherCard(); autoFetchDayWeather(todayISO());
+  markRecordClean();
+}
+var PAIN_LEVELS = [
+  {v:0, face:'😀', label:'No Hurt'},
+  {v:2, face:'🙂', label:'Hurts Little Bit'},
+  {v:4, face:'😐', label:'Hurts Little More'},
+  {v:6, face:'😟', label:'Hurts Even More'},
+  {v:8, face:'😢', label:'Hurts Whole Lot'},
+  {v:10, face:'😭', label:'Hurts Worst'}
+];
+var selectedPainLevel = null;
+function painInfo(v){
+  for(var i=0; i<PAIN_LEVELS.length; i++){ if(PAIN_LEVELS[i].v===v) return PAIN_LEVELS[i]; }
+  return null;
+}
+function painText(v){
+  var info = painInfo(v);
+  if(!info) return '';
+  return 'Pain level: '+info.v+' — '+info.label+' '+info.face;
+}
+function renderPainLine(){
+  var el = document.getElementById('painLevelLine');
+  if(!el) return;
+  if(selectedPainLevel!==null && selectedPainLevel!==undefined) el.textContent = painText(selectedPainLevel);
+  else if(selectedMood==='red') el.textContent = 'No pain level chosen yet — tap Hard/Pain again to pick a face.';
+  else el.textContent = '';
+}
+function renderPainPicker(){
+  var grid = document.getElementById('painGrid');
+  if(!grid) return;
+  grid.innerHTML = PAIN_LEVELS.map(function(pl){
+    return '<button type="button" class="pain-btn'+(pl.v===selectedPainLevel?' selected':'')+'" onclick="setPainLevel('+pl.v+')"><span class="pain-face">'+pl.face+'</span><span class="pain-num">'+pl.v+'</span><span class="pain-label">'+esc(pl.label)+'</span></button>';
+  }).join('');
+}
+function openPainPicker(){
+  renderPainPicker();
+  document.getElementById('painPickerOverlay').style.display = 'flex';
+}
+function closePainPicker(){ document.getElementById('painPickerOverlay').style.display = 'none'; }
+function setPainLevel(v){
+  selectedPainLevel = v;
+  renderPainLine();
+  closePainPicker();
+}
+function clearPainLevel(){
+  selectedPainLevel = null;
+  renderPainLine();
+  closePainPicker();
+}
+function setMood(m){
+  selectedMood = (selectedMood===m) ? '' : m;
+  document.querySelectorAll('#moodRow .mood').forEach(function(b){ b.classList.toggle('selected', b.getAttribute('data-mood')===selectedMood); });
+  if(selectedMood==='red') openPainPicker();
+  else selectedPainLevel = null;
+  renderPainLine();
+}
+function renderChips(){
+  var row = document.getElementById('chipRow');
+  row.innerHTML = '';
+  SYMPTOMS.forEach(function(s){
+    var b = document.createElement('button');
+    b.type='button'; b.className='chip'+(selectedSymptoms.indexOf(s)>=0?' selected':''); b.textContent=s;
+    b.onclick=function(){
+      var i = selectedSymptoms.indexOf(s);
+      if(i>=0) selectedSymptoms.splice(i,1); else selectedSymptoms.push(s);
+      renderChips();
+    };
+    row.appendChild(b);
+  });
+  var add = document.createElement('button');
+  add.type='button'; add.className='chip'; add.textContent='+ Add Other';
+  add.onclick=function(){ openAddTag('topic'); };
+  row.appendChild(add);
+}
+var addTagKind = '';
+function openAddTag(kind){
+  addTagKind = kind;
+  document.getElementById('addTagTitle').textContent = (kind==='person' ? 'Add a new person' : 'Add a new tag');
+  document.getElementById('addTagHelp').textContent = (kind==='person' ? "Type the person's name, then tap Add person. It will be added to the buttons and saved for future entries." : 'Type the new tag, then tap Add tag. It will be added to the buttons and saved for future entries.');
+  document.getElementById('addTagConfirmBtn').textContent = (kind==='person' ? 'Add person' : 'Add tag');
+  document.getElementById('addTagInput').value = '';
+  document.getElementById('addTagOverlay').style.display = 'flex';
+  setTimeout(function(){ var inp=document.getElementById('addTagInput'); if(inp) inp.focus(); }, 0);
+}
+function closeAddTag(){ addTagKind=''; document.getElementById('addTagOverlay').style.display='none'; }
+function confirmAddTag(){
+  var v = document.getElementById('addTagInput').value.trim();
+  if(!v) return;
+  if(addTagKind==='person'){
+    var existing = null;
+    PEOPLE.forEach(function(p){ if(PEOPLE_FULL[p].toLowerCase()===v.toLowerCase()) existing=p; });
+    if(existing){ if(selectedPeople.indexOf(existing)<0) selectedPeople.push(existing); }
+    else { customPeople.push(v); saveCustomTags(); addPersonToLists(v); if(selectedPeople.indexOf(v)<0) selectedPeople.push(v); }
+    renderPeopleChips();
+  } else {
+    var existingS = null;
+    SYMPTOMS.forEach(function(s){ if(s.toLowerCase()===v.toLowerCase()) existingS=s; });
+    if(existingS){ if(selectedSymptoms.indexOf(existingS)<0) selectedSymptoms.push(existingS); }
+    else { customSymptoms.push(v); saveCustomTags(); SYMPTOMS.push(v); if(selectedSymptoms.indexOf(v)<0) selectedSymptoms.push(v); }
+    renderChips();
+  }
+  closeAddTag();
+}
+function clearForm(){
+  editingId=null; selectedMood=''; selectedSymptoms=[]; selectedPeople=[]; selectedPainLevel=null; selectedPainLevel=null;
+  document.getElementById('entryText').value=''; document.getElementById('entryTime').value='';
+  document.getElementById('wakeTime').value=''; document.getElementById('bedTime').value='';
+  document.querySelectorAll('#moodRow .mood').forEach(function(b){ b.classList.remove('selected'); });
+  renderChips(); renderPeopleChips(); renderDay(); syncPickerDisplays();
+  document.getElementById('saveStatus').textContent='';
+  markRecordClean();
+}
+function clearFormKeepDate(){
+  editingId=null; selectedMood=''; selectedSymptoms=[]; selectedPeople=[]; selectedPainLevel=null; selectedPainLevel=null;
+  document.getElementById('entryText').value=''; document.getElementById('entryTime').value='';
+  document.querySelectorAll('#moodRow .mood').forEach(function(b){ b.classList.remove('selected'); });
+  renderChips(); renderPeopleChips(); loadWakeBedForCurrentDate(); renderWeatherCard();
+}
+function nowTimeRounded(){
+  var now = new Date();
+  var h = now.getHours();
+  var m = Math.round(now.getMinutes()/5)*5;
+  if(m===60){ m = 0; h = (h+1)%24; }
+  return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
+}
+function startNewNote(){ confirmUnsaved(doStartNewNote); }
+function doStartNewNote(){
+  if(listening){ listening=false; voicePendingStart=false; try{ recognition.stop(); }catch(e){} }
+  clearFormKeepDate();
+  document.getElementById('entryTime').value = nowTimeRounded();
+  syncTimeDisplays();
+  renderDay();
+  document.getElementById('saveStatus').textContent='New note for the same day. The time is set to now.';
+  markRecordClean();
+  document.getElementById('entryText').focus();
+}
+function endWithPeriod(s){
+  var x = (s||'').trim();
+  if(x && !/[.?!…]$/.test(x)) x += '.';
+  return x;
+}
+function capFirst(s){
+  s = s||'';
+  return (s.charAt(0) >= 'a' && s.charAt(0) <= 'z') ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+}
+/* Removes spoken fillers (um, uh, er, hmm, mm and longer mumbles of the same sounds) as standalone words only, so real words like "umbrella" and sounds like "uh-oh" are left alone. */
+function cleanFillers(s){
+  if(!s) return s;
+  var out = s.replace(/\b(?:u+m+|u+h+|e+r+|h+m+|m+),?(?=[\s.,;!?:]|$)/gi, '');
+  out = out.replace(/\s+([.,;!?:])/g, '$1');
+  out = out.replace(/\s{2,}/g, ' ');
+  return out.trim();
+}
+/* A spoken "Paragraph" (or "New paragraph") on its own is a command, not a word: it starts a new paragraph. */
+function isParagraphCommand(s){
+  var bare = (s||'').trim().replace(/[.?!…]+$/,'').trim();
+  return /^paragraph$/i.test(bare) || /^new\s+paragraph$/i.test(bare);
+}
+/* A spoken "Stop recording" (or "Stop the recording") on its own is a command: it stops the microphone. */
+function isStopCommand(s){
+  var bare = (s||'').trim().replace(/[.?!…]+$/,'').trim();
+  return /^stop\s+recording$/i.test(bare) || /^stop\s+the\s+recording$/i.test(bare);
+}
+/* Drops a leading "And " from a sentence ("And then we went" -> "then we went"). A lone "And" drops entirely. Real words like "Andrew" are untouched. */
+function stripLeadingAnd(s){
+  var t = (s||'').trim();
+  if(/^and$/i.test(t.replace(/[.?!…]+$/,''))) return '';
+  var m = t.match(/^and[,\s]+(.*)$/i);
+  return m ? m[1].trim() : s;
+}
+/* Full-text tidy for the Clean Up Text buttons: fillers out, "Paragraph" commands become blank lines, leading "And"s dropped, every sentence capitalised, standalone "i" fixed to "I", spacing tidied, and a closing period added. Paragraph breaks already in the text survive. */
+function cleanGrammar(t){
+  if(!t) return t;
+  var paras = (t||'').split(/\n\s*\n/);
+  var outParas = [];
+  paras.forEach(function(p){
+    var sentences = cleanFillers(p).split(/(?<=[.?!…])\s+/);
+    var kept = [];
+    sentences.forEach(function(sent){
+      var st = sent.trim();
+      if(!st) return;
+      st = stripLeadingAnd(st);
+      if(!st) return;
+      if(isParagraphCommand(st)){
+        if(kept.length) outParas.push(kept.join(' '));
+        kept = [];
+        return;
+      }
+      kept.push(capFirst(st));
+    });
+    if(kept.length) outParas.push(kept.join(' '));
+  });
+  var out = outParas.join('\n\n');
+  out = out.replace(/\bi\b/g, 'I');
+  out = out.replace(/([a-z])([.?!…])([A-Z])/g, '$1$2 $3');
+  out = out.replace(/\n{3,}/g, '\n\n');
+  out = out.replace(/[ \t]+/g, ' ');
+  return endWithPeriod(out.trim());
+}
+function cleanUpText(){
+  var ta = document.getElementById('entryText');
+  ta.value = cleanGrammar(ta.value);
+}
+var recordCleanState = null;
+var pendingUnsavedAction = null;
+function recordFormState(){
+  return JSON.stringify({date: document.getElementById('entryDate').value, time: document.getElementById('entryTime').value, wake: document.getElementById('wakeTime').value, bed: document.getElementById('bedTime').value, text: document.getElementById('entryText').value, mood: selectedMood, symptoms: selectedSymptoms.slice().sort(), people: selectedPeople.slice().sort(), pain: selectedPainLevel});
+}
+function markRecordClean(){ recordCleanState = recordFormState(); }
+function isRecordDirty(){ return recordCleanState !== null && recordCleanState !== recordFormState(); }
+function confirmUnsaved(action){
+  if(!isRecordDirty()){ action(); return; }
+  pendingUnsavedAction = action;
+  var msg = document.getElementById('unsavedText');
+  if(msg) msg.textContent = 'You have changes that are not saved yet. Save them before you leave?';
+  document.getElementById('unsavedModal').style.display = 'flex';
+}
+function hideUnsavedModal(){ document.getElementById('unsavedModal').style.display = 'none'; }
+function unsavedSave(){
+  var ok = saveEntry();
+  if(!ok){
+    var reason = document.getElementById('saveStatus').textContent;
+    var msg = document.getElementById('unsavedText');
+    if(msg) msg.textContent = reason + ' Tap Keep editing to add to the note, or Leave without saving to go on without it.';
+    return;
+  }
+  var action = pendingUnsavedAction; pendingUnsavedAction = null; hideUnsavedModal();
+  if(action) action();
+  if(action === doStartNewNote) showView('record');
+}
+function unsavedDiscard(){
+  var action = pendingUnsavedAction; pendingUnsavedAction = null; hideUnsavedModal();
+  if(action) action();
+}
+function unsavedKeep(){ pendingUnsavedAction = null; hideUnsavedModal(); }
+function openClearDataModal(){ document.getElementById('clearDataModal').style.display = 'flex'; }
+function hideClearDataModal(){ document.getElementById('clearDataModal').style.display = 'none'; }
+function confirmClearData(){
+  if(listening && recognition){ listening=false; voicePendingStart=false; try{ recognition.stop(); }catch(e){} }
+  hideClearDataModal(); hideUnsavedModal(); pendingUnsavedAction = null;
+  // NOTE: entries are saved as an empty array, NOT removed: load() re-seeds the paper
+  // entries whenever the key is absent, but the string "[]" is truthy, so [] stays empty.
+  save([]);
+  saveDayMeta({});
+  // Names and topics added on Record today are deliberately kept: only entries and
+  // saved day metadata are deleted, so custom chips survive a delete-all.
+  try{
+    localStorage.setItem(CLEARED_KEY, '1');
+    localStorage.removeItem(WEATHER_RESTORED_KEY);
+  }catch(e){}
+  fetchedMonths = {}; fetchingMonths = {};
+  clearForm();
+  populateDashYears();
+  renderChips(); renderPeopleChips(); renderMonth(); renderGrid();
+}
+window.addEventListener('beforeunload', function(ev){
+  if(isRecordDirty() || document.getElementById('gridNoteEdit')){
+    ev.preventDefault();
+    ev.returnValue = '';
+  }
+});
+var autoSaveLastState = null, autoSaveLastChange = 0;
+function autoSaveEntry(){
+  if(!isRecordDirty()) return;
+  var date = document.getElementById('entryDate').value;
+  var rawText = document.getElementById('entryText').value;
+  var text = rawText.trim() ? endWithPeriod(rawText) : '';
+  if(!date) return;
+  if(!text && selectedSymptoms.length===0){
+    var wakeVal = document.getElementById('wakeTime').value;
+    var bedVal = document.getElementById('bedTime').value;
+    if(editingId || (!wakeVal && !bedVal)) return;
+    saveWakeBedForCurrentDate();
+    loadWakeBedForCurrentDate();
+    renderDay();
+    markRecordClean();
+    document.getElementById('saveStatus').textContent='Saved.';
+    return;
+  }
+  var data = load();
+  if(editingId){
+    data = data.map(function(e){ if(e.id===editingId){ e.date=date; e.time=document.getElementById('entryTime').value; e.mood=selectedMood; e.symptoms=selectedSymptoms.slice(); e.people=selectedPeople.slice(); e.text=text; e.painLevel=selectedPainLevel; } return e; });
+  } else {
+    var timeEl = document.getElementById('entryTime');
+    if(!timeEl.value){ timeEl.value = nowTimeRounded(); syncTimeDisplays(); }
+    var newId = 'e'+Date.now();
+    data.push({id:newId, date:date, time:timeEl.value, mood:selectedMood, symptoms:selectedSymptoms.slice(), people:selectedPeople.slice(), text:text, painLevel:selectedPainLevel});
+    editingId = newId;
+  }
+  save(data);
+  saveWakeBedForCurrentDate();
+  loadWakeBedForCurrentDate();
+  renderDay();
+  markRecordClean();
+  document.getElementById('saveStatus').textContent='Saved.';
+}
+function autoSaveTick(){
+  if(document.getElementById('viewRecord').style.display!=='block') return;
+  if(document.getElementById('unsavedModal').style.display==='flex') return;
+  var s = recordFormState();
+  if(s !== autoSaveLastState){ autoSaveLastState = s; autoSaveLastChange = Date.now(); return; }
+  if(recordCleanState !== null && s !== recordCleanState && Date.now() - autoSaveLastChange >= 2000) autoSaveEntry();
+}
+function saveEntry(){
+  if(listening && recognition){ listening=false; voicePendingStart=false; try{ recognition.stop(); }catch(e){} }
+  var date = document.getElementById('entryDate').value;
+  var text = endWithPeriod(document.getElementById('entryText').value);
+  if(!date){ document.getElementById('saveStatus').textContent='Please pick a day first.'; return false; }
+  var wakeVal = document.getElementById('wakeTime').value;
+  var bedVal = document.getElementById('bedTime').value;
+  if(!editingId && !document.getElementById('entryText').value.trim() && selectedSymptoms.length===0 && (wakeVal || bedVal)){
+    saveWakeBedForCurrentDate();
+    loadWakeBedForCurrentDate();
+    renderDay(); renderWeatherCard();
+    var what = (wakeVal && bedVal) ? 'Wake and bed times' : (wakeVal ? 'Wake time' : 'Bed time');
+    document.getElementById('saveStatus').textContent = what + ' saved for '+fmtDate(date)+'.';
+    markRecordClean();
+    goToSavedDay(date);
+    return true;
+  }
+  if(!text && selectedSymptoms.length===0){ document.getElementById('saveStatus').textContent='Please say or type something, or tap a topic, before saving.'; return false; }
+  var data = load();
+  if(editingId){
+    data = data.map(function(e){ if(e.id===editingId){ e.date=date; e.time=document.getElementById('entryTime').value; e.mood=selectedMood; e.symptoms=selectedSymptoms.slice(); e.people=selectedPeople.slice(); e.text=text; e.painLevel=selectedPainLevel; } return e; });
+  } else {
+    var timeEl = document.getElementById('entryTime');
+    if(!timeEl.value){ timeEl.value = nowTimeRounded(); syncTimeDisplays(); }
+    data.push({id:'e'+Date.now(), date:date, time:timeEl.value, mood:selectedMood, symptoms:selectedSymptoms.slice(), people:selectedPeople.slice(), text:text, painLevel:selectedPainLevel});
+  }
+  save(data);
+  saveWakeBedForCurrentDate();
+  if(editingId){
+    loadWakeBedForCurrentDate();
+    renderDay(); renderWeatherCard();
+    document.getElementById('saveStatus').textContent='Saved for '+fmtDate(date)+'.';
+    markRecordClean();
+    goToSavedDay(date);
+    return true;
+  }
+  var keepDate = date;
+  clearForm();
+  document.getElementById('entryDate').value = keepDate;
+  loadWakeBedForCurrentDate();
+  renderDay(); renderWeatherCard();
+  document.getElementById('saveStatus').textContent='Saved for '+fmtDate(date)+'.';
+  goToSavedDay(date);
+  return true;
+}
+function renderDay(){
+  syncDateDisplay(); syncTimeDisplays();
+  var del = document.getElementById('deleteEntryBtn');
+  if(del) del.style.display = editingId ? '' : 'none';
+  var newBtn = document.getElementById('addNewNoteBtn');
+  if(newBtn) newBtn.style.display = editingId ? '' : 'none';
+  if(!listening){ var mb = document.getElementById('micBtn'); if(mb) mb.textContent = micIdleLabel(); }
+  var box = document.getElementById('otherEntries');
+  if(!box) return;
+  var date = document.getElementById('entryDate').value;
+  var data = load().filter(function(e){ return e.date===date; }).sort(function(a,b){ return (a.time||'').localeCompare(b.time||''); });
+  var others = data.filter(function(e){ return e.id!==editingId; });
+  if(!editingId || others.length===0){ box.innerHTML=''; return; }
+  box.innerHTML = '<p class="small">Other notes for this day:</p>' + others.map(function(e){
+    var snippet = (e.text||'').slice(0,40);
+    return '<p><button type="button" onclick="editEntry(\''+e.id+'\')">Edit: '+(e.time ? esc(fmtTime12(e.time))+' — ' : '')+esc(snippet)+'</button></p>';
+  }).join('');
+}
+function deleteCurrentEntry(){
+  if(editingId) deleteEntry(editingId);
+}
+function editEntry(id){ confirmUnsaved(function(){ doEditEntry(id); }); }
+function doEditEntry(id){
+  var e = load().filter(function(x){ return x.id===id; })[0];
+  if(!e) return;
+  editingId=id;
+  document.getElementById('entryDate').value=e.date;
+  document.getElementById('entryTime').value=e.time||'';
+  loadWakeBedForCurrentDate();
+  document.getElementById('entryText').value=e.text||'';
+  selectedMood=e.mood||''; selectedSymptoms=(e.symptoms||[]).slice(); selectedPeople=entryPeople(e); selectedPainLevel=(e.painLevel!==undefined && e.painLevel!==null) ? e.painLevel : null; renderPainLine();
+  document.querySelectorAll('#moodRow .mood').forEach(function(b){ b.classList.toggle('selected', b.getAttribute('data-mood')===selectedMood); });
+  renderChips(); renderPeopleChips(); renderDay(); renderWeatherCard(); autoFetchDayWeather(e.date);
+  document.getElementById('saveStatus').textContent='Editing this entry — press Save to keep your changes.';
+  markRecordClean();
+  showView('record');
+  document.getElementById('entryText').focus();
+}
+function deleteEntry(id){
+  if(!confirm('Delete this entry? This cannot be undone.')) return;
+  save(load().filter(function(e){ return e.id!==id; }));
+  if(editingId===id) clearForm();
+  renderDay(); renderMonth(); renderGrid();
+}
+var currentMonth = '';
+var MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+function fmtMonthTitle(ym){
+  if(!ym) return 'This month';
+  var p = ym.split('-');
+  return MONTH_NAMES[Number(p[1])-1] + ' ' + p[0];
+}
+function updateMonthTitle(){
+  var el = document.getElementById('monthTitle');
+  if(el) el.textContent = 'Wally\'s Log: ' + fmtMonthTitle(currentMonth);
+}
+function setMonth(ym){
+  currentMonth = ym;
+  updateMonthTitle();
+  renderMonth();
+}
+function changeMonth(delta){
+  if(!currentMonth) currentMonth = todayISO().slice(0,7);
+  var p = currentMonth.split('-');
+  var d = new Date(Number(p[0]), Number(p[1])-1+delta, 1);
+  setMonth(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'));
+}
+function headerHeight(){
+  var h = document.querySelector('header');
+  return h ? h.offsetHeight : 0;
+}
+function scrollSpreadBelowHeader(el, behavior, extra){
+  if(!el) return;
+  var rect = el.getBoundingClientRect ? el.getBoundingClientRect() : null;
+  var elTop = rect ? rect.top + (window.scrollY || window.pageYOffset || 0) : 0;
+  var top = elTop - headerHeight() - (extra || 0) - 20;
+  if(top < 0) top = 0;
+  if(window.scrollTo) window.scrollTo({top: top, behavior: behavior || 'auto'});
+}
+function scrollToTodaySpread(){
+  scrollToDaySpread(todayISO());
+}
+function scrollToDaySpread(iso){
+  var page = document.querySelector('#monthList .book-page[data-iso="'+iso+'"]');
+  var el = page ? (page.closest ? page.closest('.spread') : page) || page : null;
+  scrollSpreadBelowHeader(el, 'auto');
+}
+function goToSavedDay(iso){
+  showView('month');
+  setMonth(iso.slice(0,7));
+  setTimeout(function(){ if(document.getElementById('viewMonth').style.display==='block') scrollToDaySpread(iso); }, 100);
+}
+function goToCurrentMonth(){
+  setMonth(todayISO().slice(0,7));
+  setTimeout(function(){ if(document.getElementById('viewMonth').style.display==='block') scrollToTodaySpread(); }, 50);
+}
+function gridMonthDividers(){
+  return Array.prototype.slice.call(document.querySelectorAll('#gridTable .month-divider'));
+}
+function updateGridFixedHead(){
+  var fixed = document.getElementById('gridFixedHead');
+  if(!fixed) return;
+  var grid = document.getElementById('viewGrid');
+  var wrap = document.getElementById('gridTable');
+  var flow = document.getElementById('gridStickyHead');
+  if(!grid || grid.style.display!=='block' || !wrap || !flow){ fixed.style.display='none'; return; }
+  var scrollY = window.scrollY || window.pageYOffset || 0;
+  var headerH = headerHeight();
+  var flowTop = flow.getBoundingClientRect().top + scrollY;
+  if(scrollY + headerH < flowTop){ fixed.style.display='none'; return; }
+  var firstTable = wrap.querySelector('table.papergrid');
+  if(!firstTable){ fixed.style.display='none'; return; }
+  var firstRow = firstTable.querySelector('tbody tr');
+  if(!firstRow){ fixed.style.display='none'; return; }
+  var rect = wrap.getBoundingClientRect();
+  var tableW = firstTable.offsetWidth;
+  var tds = firstRow.querySelectorAll('td');
+  var ths = fixed.querySelectorAll('th');
+  var sum = 0;
+  for(var i=0;i<ths.length && i<tds.length;i++){
+    if(i<ths.length-1){ ths[i].style.width = tds[i].offsetWidth+'px'; sum += tds[i].offsetWidth; }
+  }
+  if(ths.length && tds.length===ths.length) ths[ths.length-1].style.width = (tableW - sum)+'px';
+  fixed.style.display='block';
+  fixed.style.top = headerH+'px';
+  fixed.style.left = (rect.left - wrap.scrollLeft)+'px';
+  fixed.style.width = tableW+'px';
+}
+function gridStickyHeadHeight(){
+  var head = document.getElementById('gridStickyHead');
+  if(!head || document.getElementById('viewGrid').style.display!=='block') return 0;
+  return head.offsetHeight;
+}
+function gridCurrentDivider(){
+  var divs = gridMonthDividers();
+  if(!divs.length) return null;
+  var pos = (window.scrollY || window.pageYOffset || 0) + headerHeight() + gridStickyHeadHeight() + 1;
+  var cur = divs[0];
+  divs.forEach(function(d){ if(d.offsetTop <= pos) cur = d; });
+  return cur;
+}
+function gridGoMonth(delta){
+  var divs = gridMonthDividers();
+  if(divs.length < 2) return;
+  var cur = gridCurrentDivider();
+  var idx = divs.indexOf(cur);
+  var next = idx + delta;
+  if(next < 0 || next >= divs.length){
+    if(!gridAnchorYm) gridAnchorYm = todayISO().slice(0,7);
+    gridAnchorYm = shiftMonth(gridAnchorYm, delta);
+    renderGrid();
+    var divs2 = gridMonthDividers();
+    var edge = delta < 0 ? divs2[0] : divs2[divs2.length-1];
+    if(edge) scrollSpreadBelowHeader(edge, 'auto', gridStickyHeadHeight());
+    updateGridFixedHead();
+    return;
+  }
+  scrollSpreadBelowHeader(divs[next], 'auto', gridStickyHeadHeight());
+  updateGridFixedHead();
+}
+function gridPrevMonth(){ gridGoMonth(-1); }
+function gridNextMonth(){ gridGoMonth(1); }
+function gridToday(){
+  var todayYm = todayISO().slice(0,7);
+  if(gridAnchorYm !== todayYm){ gridAnchorYm = todayYm; renderGrid(); }
+  var row = document.querySelector('#gridTable tr[data-iso="'+todayISO()+'"]');
+  if(row){ scrollSpreadBelowHeader(row, 'auto', gridStickyHeadHeight()); updateGridFixedHead(); return; }
+  var divs = gridMonthDividers();
+  if(!divs.length) return;
+  var today = todayISO().slice(0,7);
+  var target = null;
+  divs.forEach(function(d){ if(d.getAttribute('data-ym') === today) target = d; });
+  if(!target){
+    var past = null, future = null;
+    divs.forEach(function(d){ var ym = d.getAttribute('data-ym'); if(ym && ym <= today) past = d; else if(!future) future = d; });
+    target = past || future || divs[0];
+  }
+  scrollSpreadBelowHeader(target, 'auto', gridStickyHeadHeight());
+  updateGridFixedHead();
+}
+function isoWeek(iso){
+  var p = iso.split('-');
+  var date = new Date(Number(p[0]), Number(p[1])-1, Number(p[2]));
+  var day = (date.getDay()+6) % 7;
+  var thursday = new Date(date); thursday.setDate(date.getDate() - day + 3);
+  var firstThursday = new Date(thursday.getFullYear(), 0, 4);
+  firstThursday.setDate(firstThursday.getDate() - ((firstThursday.getDay()+6) % 7) + 3);
+  return 1 + Math.round((thursday - firstThursday) / (7*86400000));
+}
+function renderMonth(){
+  var mp = currentMonth;
+  if(!mp) return;
+  updateMonthTitle();
+  var y = Number(mp.split('-')[0]), m = Number(mp.split('-')[1]);
+  var days = new Date(y, m, 0).getDate();
+  var data = load();
+  var dayMeta = loadDayMeta();
+  var monthName = MONTH_NAMES[m-1];
+  var html = '';
+  for(var start=1; start<=days; start+=2){
+    var spreadIdx = (start-1)/2;
+    html += '<div class="spread" data-spread="'+spreadIdx+'">';
+    for(var k=0; k<2; k++){
+      var d = start + k;
+      if(d > days){
+        html += '<div class="book-page page-right blank"><div class="page-head"><button type="button" class="page-arrow page-arrow-right" aria-label="Next pages" onclick="event.stopPropagation(); turnSpread('+spreadIdx+',1)">▶</button></div><div class="page-body"></div></div>';
+        continue;
+      }
+      var iso = y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+      var dt = new Date(y, m-1, d);
+      var weekday = dt.toLocaleDateString(undefined,{weekday:'long'}).toUpperCase();
+      var es = data.filter(function(e){ return e.date===iso; }).sort(function(a,b){ return (a.time||'').localeCompare(b.time||''); });
+      var meta = dayMeta[iso] || {};
+      var side = (k===0) ? 'page-left' : 'page-right';
+      var head = (k===0)
+        ? '<button type="button" class="page-arrow page-arrow-left" aria-label="Previous pages" onclick="event.stopPropagation(); turnSpread('+spreadIdx+',-1)">◀</button><span class="page-month">'+esc(monthName)+'</span><span class="page-num">'+d+'</span>'
+        : '<span class="page-num">'+d+'</span><button type="button" class="page-arrow page-arrow-right" aria-label="Next pages" onclick="event.stopPropagation(); turnSpread('+spreadIdx+',1)">▶</button>';
+      var body = '';
+      if(es.length){
+        body = es.map(function(e){
+          return '<p class="page-entry"><span class="dot '+esc(e.mood||'none')+'"></span>'+(e.time ? '<span class="page-meta">'+esc(fmtTime12(e.time))+'</span> ' : '')+esc(e.text)+((e.symptoms||[]).length ? '<br><span class="small">'+esc(e.symptoms.join(', '))+'</span>' : '')+((e.painLevel!==undefined && e.painLevel!==null) ? '<br><span class="small">'+esc(painText(e.painLevel))+'</span>' : '')+'</p>';
+        }).join('');
+      } else {
+        body = '<p class="page-add-btn"><button type="button" onclick="event.stopPropagation(); openDay(\''+iso+'\')">Add a note for this day</button></p>';
+      }
+      var prevMeta = dayMeta[prevISO(iso)] || {};
+      var sleepText = null;
+      var wMin = timeToMinutes(meta.wake), bMin = timeToMinutes(prevMeta.bed);
+      if(wMin!==null && bMin!==null){
+        var dur = (wMin+1440) - bMin;
+        if(dur>=180 && dur<=960) sleepText = fmtMinutes(dur);
+      }
+      body += '<hr class="page-section-divider"><p class="page-section-label">Sleep</p>';
+      var hasSleepData = !!(meta.wake || meta.bed || sleepText);
+      body += '<div class="sleep-row'+(hasSleepData ? ' sleep-row-filled' : ' sleep-row-empty')+'">';
+      if(meta.wake || meta.bed){
+        body += '<span class="page-meta">Wake '+(meta.wake ? esc(fmtTime12(meta.wake)) : '—')+' · Bed '+(meta.bed ? esc(fmtTime12(meta.bed)) : '—')+'</span>';
+      }
+      body += (sleepText ? '<span class="page-meta sleep-value">Sleep: '+esc(sleepText)+'</span>' : '')+'</div>';
+      var sun = sunTimes(iso), moon = moonInfo(iso);
+      if(meta.weather){
+        body += '<hr class="page-weather-divider"><p class="page-weather-label">Weather</p><p class="page-meta page-weather-text">'+esc(meta.weather.condition)+' '+esc(meta.weather.high)+'° / '+esc(meta.weather.low)+'°'+(meta.weather.pressure!==null && meta.weather.pressure!==undefined ? ' · Pressure '+esc(Math.round(meta.weather.pressure))+' hPa' : '')+' · '+SUNRISE_ICON+' '+esc(fmtTorontoTime(sun.sunrise))+' '+SUNSET_ICON+' '+esc(fmtTorontoTime(sun.sunset))+' · '+moon.icon+' '+esc(moon.phase)+'</p>';
+      } else {
+        body += '<hr class="page-weather-divider"><p class="page-weather-label">Weather</p><p class="page-meta page-weather-text">'+SUNRISE_ICON+' '+esc(fmtTorontoTime(sun.sunrise))+' '+SUNSET_ICON+' '+esc(fmtTorontoTime(sun.sunset))+' · '+moon.icon+' '+esc(moon.phase)+'</p>';
+      }
+      var complete = es.length>0 && meta.wake && meta.bed;
+      html += '<article class="book-page '+side+'" data-iso="'+iso+'" onclick="openDay(\''+iso+'\')"><div class="page-head">'+head+'</div><div class="page-weekday">'+esc(weekday)+'</div><div class="page-rule"></div><div class="page-body">'+body+'</div><div class="page-week">week '+isoWeek(iso)+(complete ? ' · <span class="day-complete">✓ Complete</span>' : '')+'</div></article>';
+    }
+    html += '</div>';
+  }
+  document.getElementById('monthList').innerHTML = html;
+  if(monthFetchable(mp)) fetchMonthWeather(mp);
+}
+function turnSpread(idx, dir){
+  var spreads = document.querySelectorAll('#monthList .spread');
+  var cur = spreads[idx];
+  if(!cur || window.__turning) return;
+  window.__turning = true;
+  var targetIdx = idx + dir;
+  var cls = dir > 0 ? 'turn-next' : 'turn-prev';
+  cur.classList.add(cls);
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var delay = reduced ? 0 : 850;
+  setTimeout(function(){
+    cur.classList.remove(cls);
+    window.__turning = false;
+    if(targetIdx >= 0 && targetIdx < spreads.length){
+      scrollSpreadBelowHeader(spreads[targetIdx], reduced ? 'auto' : 'smooth');
+    } else if(dir > 0){
+      changeMonth(1);
+      setTimeout(function(){ var s = document.querySelectorAll('#monthList .spread'); if(s.length) scrollSpreadBelowHeader(s[0], reduced ? 'auto' : 'smooth'); }, 0);
+    } else {
+      changeMonth(-1);
+      setTimeout(function(){ var s = document.querySelectorAll('#monthList .spread'); if(s.length) scrollSpreadBelowHeader(s[s.length-1], reduced ? 'auto' : 'smooth'); }, 0);
+    }
+  }, delay);
+}
+function openDay(iso){ confirmUnsaved(function(){ doOpenDay(iso); }); }
+function doOpenDay(iso){
+  document.getElementById('entryDate').value=iso;
+  clearFormKeepDate();
+  var dayEntries = load().filter(function(e){ return e.date===iso; }).sort(function(a,b){ return (a.time||'').localeCompare(b.time||''); });
+  if(dayEntries.length){ doEditEntry(dayEntries[0].id); return; }
+  document.getElementById('saveStatus').textContent='';
+  showView('record'); renderDay(); renderWeatherCard(); autoFetchDayWeather(iso);
+  markRecordClean();
+}
+function shiftMonth(ym, delta){
+  var y = parseInt(ym.slice(0,4),10), m = parseInt(ym.slice(5,7),10) + delta;
+  while(m<1){ m+=12; y--; }
+  while(m>12){ m-=12; y++; }
+  return y+'-'+String(m).padStart(2,'0');
+}
+function patternMonth(scope){
+  if(scope==='last') return shiftMonth(todayISO().slice(0,7), -1);
+  if(scope==='all') return null;
+  return todayISO().slice(0,7);
+}
+function setSummaryScope(s){
+  document.getElementById('summaryScope').value = s;
+  document.getElementById('summaryScopeThis').classList.toggle('selected', s==='this');
+  document.getElementById('summaryScopeLast').classList.toggle('selected', s==='last');
+  document.getElementById('summaryScopeMonth').classList.toggle('selected', s==='month');
+  document.getElementById('summaryScopeAll').classList.toggle('selected', s==='all');
+  document.getElementById('summaryScopeYear').classList.toggle('selected', s==='year');
+  document.getElementById('summaryScopeCompare').classList.toggle('selected', s==='compare');
+  document.getElementById('summaryYearWrap').style.display = s==='year' ? 'block' : 'none';
+  var daysEl = document.getElementById('summaryDays'); if(daysEl) daysEl.innerHTML = '';
+  renderSummary();
+  if(s==='month') openMonthPicker('dashMonth');
+}
+var MONTH_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var TL_COLORS = ['#2e7d4f','#1e88e5','#d4a017','#9e3b3b','#5b3a1e','#c9a227','#6a8caf','#7a5c8e','#3f7d6b','#b06a2a','#4a6b8a','#8a7d3f'];
+function fmtMonthShort(ym){
+  var p = ym.split('-');
+  return MONTH_SHORT[Number(p[1])-1] + ' ' + p[0].slice(2);
+}
+function fmtMonthShortFull(ym){
+  var p = ym.split('-');
+  return MONTH_SHORT[Number(p[1])-1] + ' ' + p[0];
+}
+function timelineMonths(){
+  var data = load();
+  if(!data.length) return [];
+  var first = data[0].date.slice(0,7), last = data[0].date.slice(0,7);
+  data.forEach(function(e){
+    var ym = e.date.slice(0,7);
+    if(ym < first) first = ym;
+    if(ym > last) last = ym;
+  });
+  var months = [], ym = first;
+  while(ym <= last){ months.push(ym); ym = shiftMonth(ym, 1); }
+  return months;
+}
+function timelineScopeMonths(){
+  var scope = document.getElementById('summaryScope').value;
+  if(scope==='compare'){
+    var b = document.getElementById('patternCompareB').value || todayISO().slice(0,7);
+    var a = document.getElementById('patternCompareA').value || shiftMonth(b, -1);
+    var m = [a, b].sort();
+    return m[0]===m[1] ? [m[0]] : m;
+  }
+  if(scope==='year'){
+    var y = document.getElementById('dashYear').value;
+    if(!y) return [];
+    var out = [];
+    for(var i=1; i<=12; i++) out.push(y+'-'+String(i).padStart(2,'0'));
+    return out;
+  }
+  if(scope==='all') return timelineMonths();
+  var m2 = null;
+  if(scope==='last') m2 = shiftMonth(todayISO().slice(0,7), -1);
+  else if(scope==='month') m2 = document.getElementById('dashMonth').value;
+  else m2 = todayISO().slice(0,7);
+  return m2 ? [m2] : [];
+}
+function timelineSeries(kind, months){
+  var counts = {}, daily = {}, totals = {};
+  months.forEach(function(ym){ counts[ym] = {}; daily[ym] = {}; });
+  load().forEach(function(e){
+    var ym = e.date.slice(0,7);
+    if(!counts[ym]) return;
+    var day = Number(e.date.slice(8,10));
+    var names = kind==='people'
+      ? entryPeople(e).map(function(p){ return PEOPLE_FULL[p]||p; })
+      : (e.symptoms||[]).slice();
+    names.forEach(function(n){
+      counts[ym][n] = (counts[ym][n]||0)+1;
+      totals[n] = (totals[n]||0)+1;
+      if(!daily[ym][day]) daily[ym][day] = {};
+      daily[ym][day][n] = (daily[ym][day][n]||0)+1;
+    });
+  });
+  var series = Object.keys(totals).map(function(n){ return {name:n, total:totals[n]}; })
+    .sort(function(a,b){ return b.total-a.total || (a.name<b.name ? -1 : (a.name>b.name ? 1 : 0)); });
+  return {months:months, counts:counts, daily:daily, series:series};
+}
+function timelineTipCount(c){ return c + ' ' + (c===1 ? 'entry' : 'entries'); }
+function timelineLegend(t){
+  return '<div>' + t.series.map(function(sr, si){
+    return '<span class="tl-legend"><span class="tl-chip" style="background:'+TL_COLORS[si % TL_COLORS.length]+'"></span>'+esc(sr.name)+' ('+sr.total+')</span>';
+  }).join('') + '</div>';
+}
+function timelineChartSVG(t){
+  var W = 900, H = 340, padL = 44, padR = 12, padT = 30, padB = 36;
+  var plotW = W - padL - padR, plotH = H - padT - padB;
+  var n = t.months.length;
+  var stackTotals = t.months.map(function(ym){
+    var s = 0;
+    t.series.forEach(function(sr){ s += t.counts[ym][sr.name]||0; });
+    return s;
+  });
+  var maxTotal = 0;
+  stackTotals.forEach(function(v){ if(v>maxTotal) maxTotal=v; });
+  if(!maxTotal) return '';
+  var step = Math.max(1, Math.ceil(maxTotal/4)), yMax = step*4;
+  function y(v){ return padT + plotH - (v/yMax)*plotH; }
+  var s = '<svg class="tl-chart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Monthly timeline chart">';
+  var g;
+  for(g=0; g<=4; g++){
+    var gv = g*step, gy = y(gv);
+    s += '<line class="tl-grid" x1="'+padL+'" y1="'+gy+'" x2="'+(W-padR)+'" y2="'+gy+'"/>';
+    s += '<text x="'+(padL-8)+'" y="'+(gy+5)+'" text-anchor="end">'+gv+'</text>';
+  }
+  s += '<line class="tl-base" x1="'+padL+'" y1="'+y(0)+'" x2="'+(W-padR)+'" y2="'+y(0)+'"/>';
+  var slotW = plotW/n, barW = Math.min(64, slotW*0.62);
+  var labelStep = Math.max(1, Math.ceil(n/12));
+  t.months.forEach(function(ym, i){
+    var cx = padL + slotW*(i+0.5), x = cx - barW/2, base = 0;
+    t.series.forEach(function(sr, si){
+      var c = t.counts[ym][sr.name]||0;
+      if(!c) return;
+      var h = (c/yMax)*plotH, top = y(base+c);
+      s += '<rect x="'+x.toFixed(1)+'" y="'+top.toFixed(1)+'" width="'+barW.toFixed(1)+'" height="'+h.toFixed(1)+'" fill="'+TL_COLORS[si % TL_COLORS.length]+'" data-tip="'+esc(sr.name)+' — '+esc(fmtMonth(ym))+': '+timelineTipCount(c)+'"/>';
+      base += c;
+    });
+    if(stackTotals[i]>0){
+      s += '<text class="tl-total" x="'+cx.toFixed(1)+'" y="'+(y(stackTotals[i])-6).toFixed(1)+'" text-anchor="middle">'+stackTotals[i]+'</text>';
+    }
+    if(i % labelStep === 0 || i === n-1){
+      s += '<text x="'+cx.toFixed(1)+'" y="'+(H-10)+'" text-anchor="middle">'+esc(fmtMonthShortFull(ym))+'</text>';
+    }
+  });
+  s += '</svg>';
+  return s + timelineLegend(t);
+}
+function timelineLineSVG(t, ym){
+  var y = Number(ym.split('-')[0]), m = Number(ym.split('-')[1]);
+  var days = new Date(y, m, 0).getDate();
+  var W = 900, H = 340, padL = 44, padR = 12, padT = 30, padB = 36;
+  var plotW = W - padL - padR, plotH = H - padT - padB;
+  var maxDaily = 0, d;
+  for(d=1; d<=days; d++){
+    t.series.forEach(function(sr){
+      var c = (t.daily[ym][d] && t.daily[ym][d][sr.name]) || 0;
+      if(c>maxDaily) maxDaily = c;
+    });
+  }
+  if(!maxDaily) return '';
+  var step = Math.max(1, Math.ceil(maxDaily/4)), yMax = step*4;
+  function yv(v){ return padT + plotH - (v/yMax)*plotH; }
+  function xd(day){ return padL + plotW*(day-0.5)/days; }
+  var s = '<svg class="tl-chart" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Daily timeline chart for '+esc(fmtMonth(ym))+'">';
+  var g;
+  for(g=0; g<=4; g++){
+    var gv = g*step, gy = yv(gv);
+    s += '<line class="tl-grid" x1="'+padL+'" y1="'+gy+'" x2="'+(W-padR)+'" y2="'+gy+'"/>';
+    s += '<text x="'+(padL-8)+'" y="'+(gy+5)+'" text-anchor="end">'+gv+'</text>';
+  }
+  s += '<line class="tl-base" x1="'+padL+'" y1="'+yv(0)+'" x2="'+(W-padR)+'" y2="'+yv(0)+'"/>';
+  t.series.forEach(function(sr, si){
+    var col = TL_COLORS[si % TL_COLORS.length];
+    var pts = [];
+    for(var d2=1; d2<=days; d2++){
+      var c = (t.daily[ym][d2] && t.daily[ym][d2][sr.name]) || 0;
+      pts.push(xd(d2).toFixed(1)+','+yv(c).toFixed(1));
+    }
+    s += '<polyline fill="none" stroke="'+col+'" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" points="'+pts.join(' ')+'" data-tip="'+esc(sr.name)+' — '+esc(fmtMonth(ym))+': '+timelineTipCount(sr.total)+' in total"/>';
+    for(var d3=1; d3<=days; d3++){
+      var c3 = (t.daily[ym][d3] && t.daily[ym][d3][sr.name]) || 0;
+      if(!c3) continue;
+      s += '<circle cx="'+xd(d3).toFixed(1)+'" cy="'+yv(c3).toFixed(1)+'" r="5" fill="'+col+'" data-tip="'+esc(sr.name)+' — '+esc(fmtMonthShort(ym))+' '+d3+': '+timelineTipCount(c3)+'"/>';
+    }
+  });
+  for(var dl=1; dl<=days; dl++){
+    s += '<text x="'+xd(dl).toFixed(1)+'" y="'+(H-10)+'" text-anchor="middle">'+dl+'</text>';
+  }
+  s += '</svg>';
+  return s + timelineLegend(t);
+}
+function timelineSectionHTML(){
+  var months = timelineScopeMonths();
+  if(!months.length) return '';
+  var p = timelineSeries('people', months), t = timelineSeries('topics', months);
+  var html = '<h3>Timeline — entries by month</h3>';
+  if(months.length===1) html += '<p>'+esc(fmtMonth(months[0]))+'. Each entry can count for more than one person or topic, so the monthly totals can be higher than the number of entries.</p>';
+  else html += '<p>From '+esc(fmtMonth(months[0]))+' to '+esc(fmtMonth(months[months.length-1]))+'. Each entry can count for more than one person or topic, so the monthly totals can be higher than the number of entries.</p>';
+  html += '<h3>Who entries were about — by month</h3>';
+  html += p.series.length ? timelineChartSVG(p) : '<p>No people tagged yet.</p>';
+  html += '<h3>What entries were about — by month</h3>';
+  html += t.series.length ? timelineChartSVG(t) : '<p>No topics tapped yet.</p>';
+  if(months.length===1){
+    html += '<p>By day — each line is one person or topic, and the height is how many entries about them that day.</p>';
+    html += '<h3>Who entries were about — by day</h3>';
+    html += p.series.length ? timelineLineSVG(p, months[0]) : '<p>No people tagged yet.</p>';
+    html += '<h3>What entries were about — by day</h3>';
+    html += t.series.length ? timelineLineSVG(t, months[0]) : '<p>No topics tapped yet.</p>';
+  }
+  return html;
+}
+function tlShowTip(text, x, y){
+  var t = document.getElementById('tlTooltip'); if(!t) return;
+  t.textContent = text; t.style.display = 'block';
+  var w = t.offsetWidth, h = t.offsetHeight;
+  var lx = Math.min(x + 16, window.innerWidth - w - 10);
+  var ly = y + 18;
+  if(ly + h > window.innerHeight - 10) ly = y - h - 12;
+  t.style.left = Math.max(10, lx) + 'px';
+  t.style.top = Math.max(10, ly) + 'px';
+}
+function tlHideTip(){ var t = document.getElementById('tlTooltip'); if(t) t.style.display = 'none'; }
+document.addEventListener('mousemove', function(ev){
+  var el = ev.target && ev.target.closest ? ev.target.closest('[data-tip]') : null;
+  if(el) tlShowTip(el.getAttribute('data-tip'), ev.clientX, ev.clientY);
+  else tlHideTip();
+});
+document.addEventListener('click', tlHideTip);
+window.addEventListener('scroll', tlHideTip, true);
+function analysisJoin(items){
+  if(items.length===1) return items[0];
+  if(items.length===2) return items[0] + ' and ' + items[1];
+  return items.slice(0,-1).join(', ') + ', and ' + items[items.length-1];
+}
+function analysisSingleText(o){
+  var where;
+  if(o.title==='All time') where = 'Across all time';
+  else if(o.title.indexOf('Year ')===0) where = 'In ' + o.title.slice(5);
+  else where = 'In ' + o.title;
+  var n = o.filtered.length, d = o.days;
+  var s = [];
+  if(n===0){
+    s.push('No entries were made in ' + (o.title==='All time' ? 'this period' : o.title) + '.');
+    if(d>0) s.push('Wake and bed times were recorded on ' + d + ' ' + (d===1?'day':'days') + '.');
+  } else {
+    s.push(where + ' there ' + (n===1 ? 'was 1 entry' : 'were ' + n + ' entries') + ' on ' + d + ' ' + (d===1?'day':'days') + '.');
+    var good = o.mood.green, getting = o.mood.yellow, tough = o.mood.blue + o.mood.red;
+    var total = good + getting + tough;
+    if(total>0){
+      var lead = Math.max(good, getting, tough);
+      var leadName = lead===good ? 'good days' : (lead===getting ? 'getting by' : 'tough or hard days');
+      if(lead*2 > total) s.push('Most entries were ' + leadName + ' (' + lead + ' of ' + total + ').');
+      else {
+        var mix = [];
+        if(good) mix.push(good + ' good ' + (good===1?'day':'days'));
+        if(getting) mix.push(getting + ' getting by');
+        if(tough) mix.push(tough + ' tough or hard ' + (tough===1?'day':'days'));
+        s.push('The entries were mixed: ' + analysisJoin(mix) + '.');
+      }
+    }
+    if(o.symSorted.length){
+      var tops = o.symSorted.slice(0,3).map(function(x){ return esc(x.s) + ' (' + x.c + ')'; });
+      s.push('The topics that came up most were ' + analysisJoin(tops) + '.');
+    }
+    if(o.peopleSorted.length){
+      var top = o.peopleSorted[0];
+      if(top.s==='Me'){
+        var others = o.peopleSorted.slice(1);
+        if(others.length){
+          var ot = others.slice(0,2).map(function(x){ return esc(x.s) + ' (' + x.c + ')'; });
+          s.push('Most entries were about Me (' + top.c + '); among family, ' + analysisJoin(ot) + ' came up most.');
+        } else {
+          s.push('All entries were about Me.');
+        }
+      } else {
+        var rest = o.peopleSorted.slice(1,3).map(function(x){ return esc(x.s) + ' (' + x.c + ')'; });
+        s.push('Entries were most often about ' + esc(top.s) + ' (' + top.c + ')' + (rest.length ? ', followed by ' + analysisJoin(rest) : '') + '.');
+      }
+    }
+  }
+  if(o.wakeMins.length || o.bedMins.length){
+    var wb = [];
+    if(o.wakeMins.length) wb.push('wake-up averaged around ' + fmtClock(o.avg(o.wakeMins)));
+    if(o.bedMins.length) wb.push('bedtime averaged around ' + fmtClock(o.avg(o.bedMins)));
+    var sent = wb.join(' and ');
+    if(o.sleepMins.length) sent += ', with sleep averaging about ' + fmtMinutes(o.avg(o.sleepMins));
+    s.push(capFirst(sent) + '.');
+  }
+  if(o.savedWeatherList.length){
+    var highs = [], lows = [], precips = [], condCounts = {};
+    o.savedWeatherList.forEach(function(w){
+      var hi = Number(w.high), lo = Number(w.low), pr = Number(w.precip);
+      if(!isNaN(hi)) highs.push(hi);
+      if(!isNaN(lo)) lows.push(lo);
+      if(!isNaN(pr)) precips.push(pr);
+      condCounts[w.condition] = (condCounts[w.condition]||0)+1;
+    });
+    var mostCond = Object.keys(condCounts).sort(function(a,b){ return condCounts[b]-condCounts[a]; })[0];
+    var ws = 'The weather was mostly ' + esc(mostCond);
+    if(highs.length) ws += ', with an average high of ' + (highs.reduce(function(a,b){ return a+b; },0)/highs.length).toFixed(1) + '°C';
+    if(lows.length) ws += ' and an average low of ' + (lows.reduce(function(a,b){ return a+b; },0)/lows.length).toFixed(1) + '°C';
+    var totPr = precips.reduce(function(a,b){ return a+b; },0);
+    if(totPr>0) ws += ', and ' + totPr.toFixed(1) + ' mm of precipitation in total';
+    s.push(ws + '.');
+  }
+  return s.join(' ');
+}
+function analysisChangeClause(label, a, b){
+  if(b===a) return null;
+  return label + ' ' + (b>a ? 'rose from ' + a + ' to ' + b : 'fell from ' + a + ' to ' + b);
+}
+function analysisCompareText(A, B){
+  var s = [];
+  var from = A.title, to = B.title;
+  if(A.entries===B.entries) s.push('The number of entries stayed level at ' + A.entries + ' in both months.');
+  else if(B.entries>A.entries) s.push('Entries rose from ' + A.entries + ' in ' + from + ' to ' + B.entries + ' in ' + to + '.');
+  else s.push('Entries fell from ' + A.entries + ' in ' + from + ' to ' + B.entries + ' in ' + to + '.');
+  if(A.days!==B.days) s.push('Days logged ' + (B.days>A.days ? 'rose' : 'fell') + ' from ' + A.days + ' to ' + B.days + '.');
+  var mClauses = [];
+  var gc = analysisChangeClause('good days', A.good, B.good);
+  var tc = analysisChangeClause('tough or hard days', A.tough, B.tough);
+  if(gc) mClauses.push(gc);
+  if(tc) mClauses.push(tc);
+  if(mClauses.length===1) s.push(capFirst(mClauses[0]) + '.');
+  else if(mClauses.length===2) s.push(capFirst(mClauses[0]) + ', while ' + mClauses[1] + '.');
+  var allTopics = {};
+  Object.keys(A.symCounts).forEach(function(k){ allTopics[k]=true; });
+  Object.keys(B.symCounts).forEach(function(k){ allTopics[k]=true; });
+  var deltas = Object.keys(allTopics).map(function(k){
+    return {s:k, a:A.symCounts[k]||0, b:B.symCounts[k]||0, d:(B.symCounts[k]||0)-(A.symCounts[k]||0)};
+  }).filter(function(x){ return x.d!==0; }).sort(function(x,y){ return Math.abs(y.d)-Math.abs(x.d) || (x.s<y.s?-1:1); });
+  var big = deltas.filter(function(x){ return Math.abs(x.d)>=2; }).slice(0,2);
+  if(big.length){
+    var tClauses = big.map(function(x){ return esc(x.s) + ' ' + (x.d>0 ? 'rose from ' + x.a + ' to ' + x.b : 'fell from ' + x.a + ' to ' + x.b); });
+    s.push(capFirst(tClauses.join(', while ')) + '.');
+  } else if(deltas.length){
+    s.push('The topics stayed much the same.');
+  } else if(A.symSorted.length && B.symSorted.length && A.symSorted[0].s===B.symSorted[0].s){
+    s.push(esc(A.symSorted[0].s) + ' was the most frequent topic in both months.');
+  }
+  if(A.sleepAvg!==null && B.sleepAvg!==null){
+    var sD = B.sleepAvg - A.sleepAvg;
+    if(Math.abs(sD)>=15) s.push('Sleep averaged ' + fmtMinutes(A.sleepAvg) + ' in ' + from + ' and ' + fmtMinutes(B.sleepAvg) + ' in ' + to + '.');
+  }
+  if(A.avgHigh!==null && B.avgHigh!==null){
+    var hD = B.avgHigh - A.avgHigh;
+    if(Math.abs(hD)>=1) s.push('Average highs ' + (hD>0 ? 'rose' : 'fell') + ' from ' + A.avgHigh.toFixed(1) + '°C to ' + B.avgHigh.toFixed(1) + '°C.');
+  }
+  return s.join(' ');
+}
+var STORIES_KEY = 'wallyHealthLog_stories_v1';
+var STORIES_SEED = [];
+function loadStories(){
+  try{
+    var raw = localStorage.getItem(STORIES_KEY);
+    if(raw){ var d = JSON.parse(raw); if(Array.isArray(d)){
+      var changed=false;
+      d.forEach(function(s){
+        if(s.title){
+          var t=endWithPeriod(s.title);
+          if(!(s.text||'').startsWith(t)) s.text = t + ((s.text)? ' ' + s.text : '');
+          delete s.title; changed=true;
+        }
+      });
+      if(changed) saveStories(d);
+      return d;
+    } }
+  }catch(e){}
+  var d = STORIES_SEED.slice();
+  saveStories(d);
+  return d;
+}
+function saveStories(d){ try{ localStorage.setItem(STORIES_KEY, JSON.stringify(d)); }catch(e){} }
+var editingStoryId = null;
+var lastStorySavedText = '';
+function storyTitleFromText(t){
+  var m=(t||'').match(/^[^.?!…]*[.?!…]/);
+  return m ? m[0].trim() : (t||'').trim();
+}
+/* The title shown in the Index. A story whose title was changed there carries a title line: the first line of the text, with a blank line under it. Any other story's title is its first sentence. */
+function storyTitle(s){
+  var t = s.text||'';
+  if(s.titleLine){
+    var nl = t.indexOf('\n');
+    var line = (nl>=0 ? t.slice(0,nl) : t).trim();
+    if(line) return line;
+  }
+  return storyTitleFromText(t) || 'Untitled story';
+}
+/* A title line survives only while the text still starts with a first line and a blank line. The form can remove it (by deleting the line); only a title change in the Index can add one. */
+function syncTitleLine(s, newText){
+  if(s.titleLine && !/^.*\n\s*\n/.test(newText||'')) s.titleLine = false;
+  return s;
+}
+function completeSentences(t){
+  var m=(t||'').match(/^[\s\S]*[.?!…]/);
+  return m ? m[0].trim() : '';
+}
+function renderStories(){
+  var list = document.getElementById('storyList');
+  if(!list) return;
+  if(document.activeElement && document.activeElement.classList && document.activeElement.classList.contains('storyTitleInput')) return;
+  var stories = loadStories().slice().sort(function(a,b){ return (b.created||'').localeCompare(a.created||'') || (b.id||'').localeCompare(a.id||''); });
+  if(!stories.length){ list.innerHTML = '<p>No stories yet. Tap "Back to Stories" and record or type your first one.</p>'; return; }
+  list.innerHTML = stories.map(function(s){
+    var title = storyTitle(s);
+    return '<div class="entry"><div class="storyRow"><input type="text" class="storyTitleInput" value="'+esc(title)+'" data-id="'+esc(s.id)+'" onchange="storyTitleChanged(this)"><button type="button" onclick="viewStory(\''+esc(s.id)+'\')">View</button><button type="button" onclick="editStory(\''+esc(s.id)+'\')">Edit</button><button type="button" class="danger" onclick="deleteStory(\''+esc(s.id)+'\')">Delete</button></div><span class="small">'+esc(fmtDate(s.created))+'</span></div>';
+  }).join('');
+}
+function showStoryForm(){
+  document.getElementById('storyFormWrap').style.display='';
+  document.getElementById('storyIndexWrap').style.display='none';
+  document.getElementById('storyIndexBtn').textContent='View Index';
+}
+function showStoryIndex(){
+  stopStoryMic();
+  stopTitleMic();
+  saveStoryAuto();
+  document.getElementById('storyFormWrap').style.display='none';
+  document.getElementById('storyIndexWrap').style.display='';
+  document.getElementById('storyIndexBtn').textContent='Back to Stories';
+  renderStories();
+  window.scrollTo(0,0);
+}
+function toggleStoryIndex(){
+  if(document.getElementById('storyIndexWrap').style.display===''){ showStoryForm(); showStoryTitleRow(); }
+  else { showStoryIndex(); }
+}
+function applyStoryTitle(id, newTitle){
+  var data = loadStories();
+  var changed = null;
+  data = data.map(function(s){
+    if(s.id===id){
+      if(newTitle === storyTitle(s)){ return s; }
+      if(s.titleLine){
+        var nl = (s.text||'').indexOf('\n');
+        s.text = newTitle + (nl>=0 ? (s.text||'').slice(nl) : '');
+      } else {
+        s.text = newTitle + '\n\n' + (s.text||'');
+        s.titleLine = true;
+      }
+      changed = s;
+    }
+    return s;
+  });
+  if(changed) saveStories(data);
+  return changed;
+}
+function storyTitleChanged(input){
+  var id = input.getAttribute('data-id');
+  var newTitle = endWithPeriod(input.value.trim());
+  if(!newTitle){ renderStories(); return; }
+  applyStoryTitle(id, newTitle);
+  renderStories();
+}
+function showStoryTitleRow(){
+  if(document.getElementById('viewStories').style.display==='none') return;
+  if(document.getElementById('storyFormWrap').style.display==='none') return;
+  if(!editingStoryId) return;
+  var s = loadStories().filter(function(x){ return x.id===editingStoryId; })[0];
+  if(!s || !(s.text||'').trim()) return;
+  document.getElementById('storyTitleField').value = s.titleLine ? storyTitle(s) : '';
+  document.getElementById('storyTitleRow').style.display = '';
+}
+function hideStoryTitleRow(){
+  document.getElementById('storyTitleRow').style.display = 'none';
+}
+function withTitleLine(text, newTitle){
+  if(!newTitle) return text;
+  if(/^.*\n\s*\n/.test(text)){
+    var nl = text.indexOf('\n');
+    return newTitle + text.slice(nl);
+  }
+  return newTitle + '\n\n' + text;
+}
+function saveTitleNow(){
+  var newTitle = endWithPeriod(document.getElementById('storyTitleField').value.trim());
+  if(!newTitle || !editingStoryId) return false;
+  applyStoryTitle(editingStoryId, newTitle);
+  var ta = document.getElementById('storyText');
+  ta.value = withTitleLine(ta.value, newTitle);
+  var cur = loadStories().filter(function(x){ return x.id===editingStoryId; })[0];
+  if(cur) lastStorySavedText = cur.text;
+  renderStories();
+  return true;
+}
+function saveStoryAuto(){
+  var raw = document.getElementById('storyText').value;
+  var t = completeSentences(raw);
+  if(t && /\n\s*\n\s*$/.test(raw)) t += '\n\n';
+  if(!t || t===lastStorySavedText) return false;
+  var data = loadStories();
+  if(editingStoryId){
+    var found=false;
+    data = data.map(function(s){ if(s.id===editingStoryId){ s.text=t; syncTitleLine(s,t); found=true; } return s; });
+    if(!found){ editingStoryId=null; }
+  }
+  if(!editingStoryId){
+    var id = 'story-'+Date.now();
+    data.push({id:id, text:t, created:todayISO()});
+    editingStoryId = id;
+    document.getElementById('deleteStoryBtn').style.display = '';
+  }
+  saveStories(data);
+  lastStorySavedText = t;
+  renderStories();
+  return true;
+}
+function storyTextChanged(){
+  saveStoryAuto();
+}
+function openStory(id){
+  stopStoryMic();
+  stopTitleMic();
+  var s = loadStories().filter(function(x){ return x.id===id; })[0];
+  if(!s) return;
+  editingStoryId = id;
+  document.getElementById('storyText').value = s.text||'';
+  lastStorySavedText = s.text||'';
+  document.getElementById('deleteStoryBtn').style.display = '';
+  document.getElementById('storySaveStatus').textContent = '';
+  document.getElementById('storyMicStatus').textContent = '';
+  showStoryForm();
+  showStoryTitleRow();
+  window.scrollTo(0,0);
+}
+function clearStoryForm(){
+  stopStoryMic();
+  stopTitleMic();
+  hideStoryTitleRow();
+  editingStoryId = null;
+  lastStorySavedText = '';
+  document.getElementById('storyText').value = '';
+  document.getElementById('deleteStoryBtn').style.display = 'none';
+  document.getElementById('storySaveStatus').textContent = '';
+  document.getElementById('storyMicStatus').textContent = '';
+}
+function saveStory(){
+  stopStoryMic();
+  stopTitleMic();
+  var text = endWithPeriod(document.getElementById('storyText').value);
+  if(!text){ document.getElementById('storySaveStatus').textContent='Please say or type some words before saving.'; return false; }
+  var newTitle = endWithPeriod(document.getElementById('storyTitleField').value.trim());
+  var titleApplied = false;
+  if(newTitle){
+    var before = text;
+    text = withTitleLine(text, newTitle);
+    titleApplied = (text !== before);
+  }
+  var data = loadStories();
+  if(editingStoryId){
+    data = data.map(function(s){ if(s.id===editingStoryId){ s.text=text; if(titleApplied){ s.titleLine=true; } else { syncTitleLine(s,text); } } return s; });
+  } else {
+    var id = 'story-'+Date.now();
+    var ns = {id:id, text:text, created:todayISO()};
+    if(titleApplied) ns.titleLine = true;
+    data.push(ns);
+    editingStoryId = id;
+  }
+  saveStories(data);
+  lastStorySavedText = text;
+  document.getElementById('storyText').value = text;
+  document.getElementById('deleteStoryBtn').style.display = '';
+  document.getElementById('storySaveStatus').textContent = 'Saved.';
+  hideStoryTitleRow();
+  renderStories();
+  return true;
+}
+function viewStory(id){
+  openStory(id);
+}
+function editStory(id){
+  openStory(id);
+  var ta = document.getElementById('storyText');
+  ta.focus();
+  try{ ta.setSelectionRange(ta.value.length, ta.value.length); }catch(e){}
+}
+function deleteStory(id){
+  if(!confirm('Delete this story? This cannot be undone.')) return;
+  saveStories(loadStories().filter(function(s){ return s.id!==id; }));
+  if(editingStoryId===id) clearStoryForm();
+  renderStories();
+}
+function deleteCurrentStory(){
+  if(!editingStoryId) return;
+  deleteStory(editingStoryId);
+}
+function readStoryAloud(){
+  var t = document.getElementById('storyText').value.trim();
+  if(!t){ alert('Nothing to read yet. Record or type something first.'); return; }
+  if(!('speechSynthesis' in window)){ alert('Read aloud is not available on this device.'); return; }
+  window.speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(t);
+  u.rate = 0.9;
+  window.speechSynthesis.speak(u);
+}
+function cleanUpStoryText(){
+  var el = document.getElementById('storyText');
+  el.value = cleanGrammar(el.value);
+}
+var storyRecognition = null;
+var storyListening = false;
+var storyVoiceSession = 0;
+var storyVoiceStarted = false;
+var storyVoicePendingStart = false;
+var storyVoiceHadError = false;
+var storyVoiceFatal = false;
+var storyFinalText = '';
+var titleRecognition = null;
+var titleListening = false;
+var titleVoiceSession = 0;
+var titleVoiceStarted = false;
+var titleVoicePendingStart = false;
+var titleVoiceHadError = false;
+var titleVoiceFatal = false;
+var titleFinalText = '';
+var pendingMicTarget = null;
+function setupStoryVoice(){
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var note = document.getElementById('voiceNote');
+  if(!SR){
+    note.style.display='block';
+    note.innerHTML='<strong>Voice is not available in this browser.</strong> Try Chrome or Edge, or use your device keyboard dictation. You can still type in the big box.';
+    document.getElementById('storyMicBtn').disabled = true;
+    return;
+  }
+  storyVoiceSession++;
+  var mySession = storyVoiceSession;
+  storyRecognition = new SR();
+  storyRecognition.continuous = true;
+  storyRecognition.interimResults = true;
+  storyRecognition.lang = 'en-US';
+  storyRecognition.onstart = function(){ if(mySession!==storyVoiceSession) return; storyVoiceStarted=true; storyVoicePendingStart=false; storyVoiceHadError=false; };
+  storyRecognition.onresult = function(ev){
+    if(mySession!==storyVoiceSession) return;
+    var interim = '';
+    var hadFinal = false;
+    var stopAsked = false;
+    for(var i=ev.resultIndex; i<ev.results.length; i++){
+      if(ev.results[i].isFinal){
+        hadFinal = true;
+        var seg = cleanFillers((ev.results[i][0].transcript||'').trim());
+        seg = stripLeadingAnd(seg);
+        if(isStopCommand(seg)){
+          stopAsked = true;
+        } else if(isParagraphCommand(seg)){
+          if(storyFinalText) storyFinalText = storyFinalText.replace(/\s+$/,'') + '\n\n';
+        } else if(seg){
+          seg = capFirst(seg);
+          if(!/[.?!…]$/.test(seg)) seg += '.';
+          storyFinalText = storyFinalText ? storyFinalText + (/\n$/.test(storyFinalText) ? '' : ' ') + seg : seg;
+        }
+      }
+      else interim += ev.results[i][0].transcript;
+    }
+    document.getElementById('storyText').value = interim ? (storyFinalText ? storyFinalText + (/\n$/.test(storyFinalText) ? '' : ' ') + interim : interim).trim() : storyFinalText;
+    if(hadFinal) saveStoryAuto();
+    if(stopAsked){
+      pendingMicTarget=null;
+      stopStoryMic();
+    }
+  };
+  storyRecognition.onend = function(){
+    if(mySession!==storyVoiceSession) return;
+    if(storyListening && storyVoiceStarted){ try{ storyRecognition.start(); document.getElementById('storyMicStatus').textContent='Listening… talk now. Press the yellow button again to stop.'; }catch(e){ storyListening=false; document.getElementById('storyMicBtn').textContent='Click to Record Story'; document.getElementById('storyMicStatus').textContent='Microphone could not start. Click the record button again.'; } }
+    else if(storyListening && storyVoicePendingStart){
+      storyVoicePendingStart=false;
+      try{ storyRecognition.start(); }catch(e){ storyListening=false; document.getElementById('storyMicBtn').textContent='Click to Record Story'; document.getElementById('storyMicStatus').textContent='Microphone could not start. Click the record button again.'; }
+    }
+    else if(storyListening){
+      storyListening=false;
+      document.getElementById('storyMicBtn').textContent='Click to Record Story';
+      if(storyVoiceHadError){ storyVoiceHadError=false; }
+      else { document.getElementById('storyMicStatus').textContent='Microphone permission was not given. Click the record button again and choose "Allow while visiting the site". If no prompt appears, the mic is blocked for this file: click the icon at the left of the address bar, open Site settings, set Microphone to Allow, then reload this page.'; }
+    }
+    else if(storyVoiceFatal){ storyVoiceFatal=false; }
+    else { document.getElementById('storyMicStatus').textContent='Check or edit the story.'; document.getElementById('storyMicBtn').textContent='Click to Record Story'; showStoryTitleRow(); }
+    if(pendingMicTarget==='record'){ pendingMicTarget=null; startRecordMic(); }
+    else if(pendingMicTarget==='title'){ pendingMicTarget=null; startTitleMic(); }
+  };
+  storyRecognition.onerror = function(ev){
+    if(mySession!==storyVoiceSession) return;
+    storyVoiceHadError=true;
+    var msg;
+    if(ev.error==='not-allowed') msg='Microphone is blocked for this file. Click the icon at the left of the address bar, open Site settings, set Microphone to Allow, then reload this page. You can still type in the big box.';
+    else if(ev.error==='service-not-allowed') msg='Chrome\'s speech service is not allowed here. You can still type in the big box.';
+    else if(ev.error==='audio-capture') msg='No microphone was found, or another app is using it. Close other apps using the mic and try again. You can still type in the big box.';
+    else if(ev.error==='network') msg='The speech service could not be reached. Check the internet connection and try again. You can still type in the big box.';
+    else msg='Microphone problem: '+ev.error+'. You can still type in the big box.';
+    document.getElementById('storyMicStatus').textContent=msg;
+    if(ev.error==='not-allowed' || ev.error==='service-not-allowed' || ev.error==='audio-capture'){
+      storyListening=false; storyVoiceFatal=true;
+      document.getElementById('storyMicBtn').textContent='Click to Record Story';
+    }
+  };
+}
+function stopStoryMic(){
+  if(storyListening && storyRecognition){ storyListening=false; storyVoicePendingStart=false; try{ storyRecognition.stop(); }catch(e){} }
+  var b = document.getElementById('storyMicBtn');
+  if(b) b.textContent='Click to Record Story';
+}
+function startStoryMic(){
+  hideStoryTitleRow();
+  setupStoryVoice(); if(!storyRecognition) return;
+  var rawStoryText = document.getElementById('storyText').value;
+  var storyHadBreak = /\n\s*\n\s*$/.test(rawStoryText);
+  storyFinalText = rawStoryText.trim();
+  if(storyFinalText && !/[.?!…]$/.test(storyFinalText)) storyFinalText += '.';
+  if(storyHadBreak && storyFinalText) storyFinalText += '\n\n';
+  storyListening=true; storyVoiceFatal=false; storyVoiceStarted=false; storyVoicePendingStart=false; storyVoiceHadError=false;
+  try{ storyRecognition.start(); }catch(e){ storyVoicePendingStart=true; }
+  document.getElementById('storyMicStatus').textContent = storyVoicePendingStart ? 'Starting the microphone…' : 'Listening… talk now. Press the yellow button again to stop.';
+  document.getElementById('storyMicBtn').textContent='■  Stop Recording';
+}
+function toggleStoryMic(){
+  if(storyListening){
+    pendingMicTarget=null;
+    stopStoryMic();
+    saveStoryAuto();
+  } else {
+    if(pendingMicTarget){ pendingMicTarget='story'; return; }
+    if(listening && recognition){
+      pendingMicTarget='story';
+      listening=false; voicePendingStart=false;
+      try{ recognition.stop(); }catch(e){}
+      document.getElementById('micBtn').textContent=micIdleLabel();
+      document.getElementById('storyMicStatus').textContent='Starting the microphone…';
+      document.getElementById('storyMicBtn').textContent='■  Stop Recording';
+      return;
+    }
+    if(titleListening){
+      pendingMicTarget='story';
+      stopTitleMic();
+      document.getElementById('storyMicStatus').textContent='Starting the microphone…';
+      document.getElementById('storyMicBtn').textContent='■  Stop Recording';
+      return;
+    }
+    startStoryMic();
+  }
+}
+function setupTitleVoice(){
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var note = document.getElementById('voiceNote');
+  if(!SR){
+    note.style.display='block';
+    note.innerHTML='<strong>Voice is not available in this browser.</strong> Try Chrome or Edge, or use your device keyboard dictation. You can still type in the big box.';
+    document.getElementById('titleMicBtn').disabled = true;
+    return;
+  }
+  titleVoiceSession++;
+  var mySession = titleVoiceSession;
+  titleRecognition = new SR();
+  titleRecognition.continuous = true;
+  titleRecognition.interimResults = true;
+  titleRecognition.lang = 'en-US';
+  titleRecognition.onstart = function(){ if(mySession!==titleVoiceSession) return; titleVoiceStarted=true; titleVoicePendingStart=false; titleVoiceHadError=false; };
+  titleRecognition.onresult = function(ev){
+    if(mySession!==titleVoiceSession) return;
+    var stopAsked = false;
+    for(var i=ev.resultIndex; i<ev.results.length; i++){
+      if(ev.results[i].isFinal){
+        var seg = cleanFillers((ev.results[i][0].transcript||'').trim());
+        seg = stripLeadingAnd(seg);
+        if(isStopCommand(seg)){
+          stopAsked = true;
+        } else if(isParagraphCommand(seg)){
+          // titles are one line; the command word is never written
+        } else if(seg){
+          seg = capFirst(seg);
+          titleFinalText = titleFinalText ? titleFinalText + ' ' + seg : seg;
+          document.getElementById('storyTitleField').value = titleFinalText;
+        }
+      }
+    }
+    if(stopAsked){
+      pendingMicTarget=null;
+      stopTitleMic();
+    }
+  };
+  titleRecognition.onend = function(){
+    if(mySession!==titleVoiceSession) return;
+    if(titleListening && titleVoiceStarted){ try{ titleRecognition.start(); document.getElementById('storyMicStatus').textContent='Listening for the title… tap Record Title again to stop.'; }catch(e){ titleListening=false; document.getElementById('titleMicBtn').textContent='Record Title'; document.getElementById('storyMicStatus').textContent='Title microphone could not start. Tap Record Title again.'; } }
+    else if(titleListening && titleVoicePendingStart){
+      titleVoicePendingStart=false;
+      try{ titleRecognition.start(); }catch(e){ titleListening=false; document.getElementById('titleMicBtn').textContent='Record Title'; document.getElementById('storyMicStatus').textContent='Title microphone could not start. Tap Record Title again.'; }
+    }
+    else if(titleListening){
+      titleListening=false;
+      document.getElementById('titleMicBtn').textContent='Record Title';
+      if(titleVoiceHadError){ titleVoiceHadError=false; }
+      else { document.getElementById('storyMicStatus').textContent='Microphone permission was not given. Click the record button again and choose "Allow while visiting the site". If no prompt appears, the mic is blocked for this file: click the icon at the left of the address bar, open Site settings, set Microphone to Allow, then reload this page.'; }
+      saveTitleNow();
+    }
+    else if(titleVoiceFatal){ titleVoiceFatal=false; saveTitleNow(); }
+    else { var titleSaved = saveTitleNow(); document.getElementById('storyMicStatus').textContent = titleSaved ? 'Title saved.' : 'Check the title.'; document.getElementById('titleMicBtn').textContent='Record Title'; }
+    if(pendingMicTarget==='record'){ pendingMicTarget=null; startRecordMic(); }
+    else if(pendingMicTarget==='story'){ pendingMicTarget=null; startStoryMic(); }
+  };
+  titleRecognition.onerror = function(ev){
+    if(mySession!==titleVoiceSession) return;
+    titleVoiceHadError=true;
+    var msg;
+    if(ev.error==='not-allowed') msg='Title microphone is blocked for this file. Click the icon at the left of the address bar, open Site settings, set Microphone to Allow, then reload this page. You can still type the title.';
+    else if(ev.error==='service-not-allowed') msg='Chrome\'s speech service is not allowed here. You can still type the title.';
+    else if(ev.error==='audio-capture') msg='No microphone was found, or another app is using it. Close other apps using the mic and try again. You can still type the title.';
+    else if(ev.error==='network') msg='The speech service could not be reached. Check the internet connection and try again. You can still type the title.';
+    else msg='Title microphone problem: '+ev.error+'. You can still type the title.';
+    document.getElementById('storyMicStatus').textContent=msg;
+    if(ev.error==='not-allowed' || ev.error==='service-not-allowed' || ev.error==='audio-capture'){
+      titleListening=false; titleVoiceFatal=true;
+      document.getElementById('titleMicBtn').textContent='Record Title';
+    }
+  };
+}
+function stopTitleMic(){
+  if(titleListening && titleRecognition){ titleListening=false; titleVoicePendingStart=false; try{ titleRecognition.stop(); }catch(e){} }
+  var b = document.getElementById('titleMicBtn');
+  if(b) b.textContent='Record Title';
+}
+function startTitleMic(){
+  setupTitleVoice(); if(!titleRecognition) return;
+  titleFinalText = '';
+  titleListening=true; titleVoiceFatal=false; titleVoiceStarted=false; titleVoicePendingStart=false; titleVoiceHadError=false;
+  try{ titleRecognition.start(); }catch(e){ titleVoicePendingStart=true; }
+  document.getElementById('storyMicStatus').textContent = titleVoicePendingStart ? 'Starting the microphone…' : 'Listening for the title… tap Record Title again to stop.';
+  document.getElementById('titleMicBtn').textContent='■  Stop Recording';
+}
+function toggleTitleMic(){
+  if(titleListening){
+    pendingMicTarget=null;
+    stopTitleMic();
+  } else {
+    if(pendingMicTarget){ pendingMicTarget='title'; return; }
+    if(listening && recognition){
+      pendingMicTarget='title';
+      listening=false; voicePendingStart=false;
+      try{ recognition.stop(); }catch(e){}
+      document.getElementById('micBtn').textContent=micIdleLabel();
+      document.getElementById('storyMicStatus').textContent='Starting the microphone…';
+      document.getElementById('titleMicBtn').textContent='■  Stop Recording';
+      return;
+    }
+    if(storyListening){
+      pendingMicTarget='title';
+      stopStoryMic();
+      document.getElementById('storyMicStatus').textContent='Starting the microphone…';
+      document.getElementById('titleMicBtn').textContent='■  Stop Recording';
+      return;
+    }
+    startTitleMic();
+  }
+}
+function renderSummary(){
+  var scope = document.getElementById('summaryScope').value;
+  if(scope==='compare'){ renderSummaryCompare(); return; }
+  renderSummarySingle();
+}
+function renderSummarySingle(){
+  syncMonthDisplay('dashMonth','dashMonthBtn');
+  var scope = document.getElementById('summaryScope').value;
+  var month = null, year = null, title = '';
+  if(scope==='last'){ month = shiftMonth(todayISO().slice(0,7), -1); title = fmtMonth(month); }
+  else if(scope==='month'){ month = document.getElementById('dashMonth').value; title = month ? fmtMonth(month) : ''; }
+  else if(scope==='year'){ year = document.getElementById('dashYear').value; title = year ? 'Year ' + year : ''; }
+  else if(scope==='all'){ title = 'All time'; }
+  else { month = todayISO().slice(0,7); title = fmtMonth(month); }
+  var box = document.getElementById('summaryContent');
+  if((scope==='month' && !month) || (scope==='year' && !year)){ box.innerHTML = '<p>Pick a month or a year first.</p>'; return; }
+  var data = load();
+  var filtered = [];
+  if(scope==='year' && year){ filtered = data.filter(function(e){ return e.date.indexOf(year+'-')===0; }); }
+  else if(month){ filtered = data.filter(function(e){ return e.date.indexOf(month)===0; }); }
+  else { filtered = data.slice(); }
+  filtered = filtered.slice().sort(function(a,b){ return a.date.localeCompare(b.date) || (a.time||'').localeCompare(b.time||''); });
+  var allDayMeta = loadDayMeta();
+  var metaInPeriod = Object.keys(allDayMeta).filter(function(dt){
+    if(scope==='year' && year) return dt.indexOf(year+'-')===0;
+    if(month) return dt.indexOf(month)===0;
+    return true;
+  });
+  if(!filtered.length && !metaInPeriod.length){
+    box.innerHTML = '<h3>Summary for '+esc(title)+'</h3><p>No entries yet in this period.</p>';
+    return;
+  }
+  var days = {}; var mood = {blue:0, green:0, yellow:0, red:0};
+  var symCounts = {}; var peopleCounts = {};
+  PEOPLE.forEach(function(p){ peopleCounts[p]=0; });
+  filtered.forEach(function(e){
+    days[e.date]=true;
+    if(e.mood && mood[e.mood]!==undefined) mood[e.mood]++;
+    (e.symptoms||[]).forEach(function(s){ symCounts[s]=(symCounts[s]||0)+1; });
+    entryPeople(e).forEach(function(p){ if(peopleCounts[p]===undefined) peopleCounts[p]=0; peopleCounts[p]++; });
+  });
+  metaInPeriod.forEach(function(dt){ days[dt]=true; });
+  var symSorted = Object.keys(symCounts).map(function(s){ return {s:s, c:symCounts[s]}; }).sort(function(a,b){ return b.c-a.c; });
+  var peopleSorted = Object.keys(peopleCounts).map(function(p){ return {s:PEOPLE_FULL[p]||p, c:peopleCounts[p]}; }).filter(function(x){ return x.c>0; }).sort(function(a,b){ return b.c-a.c; });
+  var good = mood.green, tough = mood.blue + mood.red;
+  var withSym = filtered.filter(function(e){ return (e.symptoms||[]).length>0; }).length;
+  var html = '<h3>Summary for '+esc(title)+'</h3>';
+  html += '<div class="statgrid">'
+    + '<div class="stat"><b>'+filtered.length+'</b>Entries</div>'
+    + '<div class="stat"><b>'+Object.keys(days).length+'</b>Days logged</div>'
+    + '<div class="stat"><b>'+good+'</b>Good days</div>'
+    + '<div class="stat"><b>'+tough+'</b>Tough or hard days</div>'
+    + '<div class="stat"><b>'+withSym+'</b>Entries with a topic tapped</div>'
+    + '<div class="stat"><b>'+(filtered.length-withSym)+'</b>Journal notes without a topic</div>'
+    + '</div>';
+  html += '<p><strong>Days:</strong> Good '+mood.green+', Getting by '+mood.yellow+', Tough '+mood.blue+', Hard '+mood.red+'.</p>';
+  if(symSorted.length){
+    html += '<p><strong>Most frequent:</strong> '+esc(symSorted[0].s)+' on '+symSorted[0].c+' '+(symSorted[0].c===1?'entry':'entries')+'.</p>';
+    if(symSorted.length>1) html += '<p><strong>Next:</strong> '+esc(symSorted[1].s)+' on '+symSorted[1].c+' '+(symSorted[1].c===1?'entry':'entries')+'.</p>';
+    html += '<h3>Topics</h3>' + symSorted.map(function(x){
+      return '<div class="barwrap">'+esc(x.s)+' — '+x.c+'<div class="bar" style="width:'+Math.max(12, Math.round(x.c/symSorted[0].c*100))+'%">'+x.c+'</div></div>';
+    }).join('');
+    html += '<h3>Tap a topic to see its days</h3><div class="chips" id="summaryChips"></div><div id="summaryDays"></div>';
+  } else {
+    html += '<p>No topics tapped yet in this period.</p>';
+  }
+  if(peopleSorted.length){
+    html += '<h3>Who entries were about</h3><p>An entry can count for more than one person.</p>' + peopleSorted.map(function(x){
+      return '<div class="barwrap">'+esc(x.s)+' — '+x.c+'<div class="bar" style="width:'+Math.max(12, Math.round(x.c/peopleSorted[0].c*100))+'%">'+x.c+'</div></div>';
+    }).join('');
+  }
+  html += timelineSectionHTML();
+  html += '<h3>Wake and bed</h3><p class="small">Underlined times on paper, taken to be wake-up and bedtime. Sleep is bedtime the previous night to wake time the next morning.</p>';
+  var wakeMins = [], bedMins = [], sleepMins = [];
+  metaInPeriod.forEach(function(dt){
+    var mm = allDayMeta[dt] || {};
+    var w = timeToMinutes(mm.wake), b = timeToMinutes(mm.bed);
+    if(w!==null) wakeMins.push(w);
+    if(b!==null) bedMins.push(b < 720 ? b+1440 : b);
+    if(w!==null){
+      var prev = allDayMeta[prevISO(dt)] || {};
+      var pb = timeToMinutes(prev.bed);
+      if(pb!==null){
+        var dur = (w+1440) - pb;
+        if(dur>=180 && dur<=960) sleepMins.push(dur);
+      }
+    }
+  });
+  function avg(arr){ if(!arr.length) return null; var s=0; arr.forEach(function(v){ s+=v; }); return s/arr.length; }
+  if(wakeMins.length || bedMins.length){
+    html += '<p><strong>Wake:</strong> average '+fmtClock(avg(wakeMins))+' on '+wakeMins.length+' '+(wakeMins.length===1?'day':'days')+'.</p>';
+    html += '<p><strong>Bed:</strong> average '+fmtClock(avg(bedMins))+' on '+bedMins.length+' '+(bedMins.length===1?'day':'days')+'.</p>';
+    if(sleepMins.length) html += '<p><strong>Sleep:</strong> average '+fmtMinutes(avg(sleepMins))+' on '+sleepMins.length+' '+(sleepMins.length===1?'night':'nights')+' where both bedtime the night before and wake time were recorded.</p>';
+    else html += '<p><strong>Sleep:</strong> not yet calculable — it needs a bedtime one night and a wake time the next morning.</p>';
+  } else {
+    html += '<p>No wake or bed times yet in this period. Enter them in Record, and they will appear here.</p>';
+  }
+  html += '<h3>Weather in Toronto</h3>';
+  var savedWeatherList = [];
+  metaInPeriod.forEach(function(dt){
+    var mw = (allDayMeta[dt] || {}).weather;
+    if(mw) savedWeatherList.push(mw);
+  });
+  if(savedWeatherList.length){
+    var highs = savedWeatherList.map(function(w){ return Number(w.high); }).filter(function(v){ return !isNaN(v); });
+    var lows = savedWeatherList.map(function(w){ return Number(w.low); }).filter(function(v){ return !isNaN(v); });
+    var precips = savedWeatherList.map(function(w){ return Number(w.precip); }).filter(function(v){ return !isNaN(v); });
+    var condCounts = {};
+    savedWeatherList.forEach(function(w){ condCounts[w.condition] = (condCounts[w.condition]||0)+1; });
+    var mostCond = Object.keys(condCounts).sort(function(a,b){ return condCounts[b]-condCounts[a]; })[0];
+    html += '<p><strong>Average high:</strong> '+(highs.length ? (highs.reduce(function(a,b){ return a+b; },0)/highs.length).toFixed(1)+'°C' : '—')+' &nbsp; <strong>Average low:</strong> '+(lows.length ? (lows.reduce(function(a,b){ return a+b; },0)/lows.length).toFixed(1)+'°C' : '—')+' &nbsp; <strong>Most common:</strong> '+esc(mostCond)+'.</p>';
+    var pressures = savedWeatherList.map(function(w){ return Number(w.pressure); }).filter(function(v){ return !isNaN(v); });
+    if(pressures.length) html += '<p><strong>Average pressure:</strong> '+Math.round(pressures.reduce(function(a,b){ return a+b; },0)/pressures.length)+' hPa on '+pressures.length+' '+(pressures.length===1?'day':'days')+' with pressure saved.</p>';
+    if(precips.length) html += '<p><strong>Total precipitation in saved days:</strong> '+precips.reduce(function(a,b){ return a+b; },0).toFixed(1)+' mm on '+savedWeatherList.length+' '+(savedWeatherList.length===1?'day':'days')+' with weather saved.</p>';
+    else html += '<p>Weather saved on '+savedWeatherList.length+' '+(savedWeatherList.length===1?'day':'days')+'.</p>';
+  } else {
+    html += '<p>No weather saved yet in this period. Open a day, the month book, or the Paper grid and Toronto weather is fetched and saved automatically (needs internet). Sunrise, sunset and moon are calculated for every day and show in the Paper grid even without saved weather.</p>';
+  }
+  var analysisLabel = (scope==='all') ? 'All Time' : (scope==='year' ? 'One Year' : fmtMonth(month));
+  var analysisHtml = '<h3>' + esc(analysisLabel) + ': What this shows</h3><p>' + analysisSingleText({title:title, filtered:filtered, days:Object.keys(days).length, mood:mood, symSorted:symSorted, peopleSorted:peopleSorted, wakeMins:wakeMins, bedMins:bedMins, sleepMins:sleepMins, savedWeatherList:savedWeatherList, avg:avg}) + '</p>';
+  html = analysisHtml + html;
+  if(scope==='year'){
+    var months = {};
+    filtered.forEach(function(e){
+      var ym = e.date.slice(0,7);
+      if(!months[ym]) months[ym]={n:0, good:0, tough:0};
+      months[ym].n++;
+      if(e.mood==='green') months[ym].good++;
+      if(e.mood==='blue' || e.mood==='red') months[ym].tough++;
+    });
+    html += '<h3>Month by month in '+esc(year)+'</h3>';
+    Object.keys(months).sort().forEach(function(ym){
+      var mm = months[ym];
+      html += '<p><strong>'+esc(fmtMonth(ym))+':</strong> '+mm.n+' '+(mm.n===1?'entry':'entries')+', '+mm.good+' good '+(mm.good===1?'day':'days')+', '+mm.tough+' tough or hard '+(mm.tough===1?'day':'days')+'.</p>';
+    });
+  }
+  html += '<h3>All entries in this period</h3>' + filtered.map(function(e){
+    return '<div class="entry"><p><span class="dot '+esc(e.mood||'none')+'"></span><strong>'+esc(fmtDate(e.date))+(e.time?' at '+esc(fmtTime12(e.time)):'')+'</strong><br>'
+      + 'About: '+esc(entryPeople(e).map(function(p){ return PEOPLE_FULL[p]||p; }).join(', '))+'<br>'
+      + ((e.symptoms||[]).length ? esc(e.symptoms.join(', '))+'<br>' : '')
+      + esc(e.text)+((e.painLevel!==undefined && e.painLevel!==null) ? '<br>'+esc(painText(e.painLevel)) : '')+'</p></div>';
+  }).join('');
+  box.innerHTML = html;
+  var chipsEl = document.getElementById('summaryChips');
+  if(chipsEl){
+    chipsEl.innerHTML = '';
+    symSorted.forEach(function(x){
+      var b = document.createElement('button'); b.type='button'; b.className='chip'; b.textContent=x.s+' ('+x.c+')';
+      b.onclick = function(){ showSummaryDays(x.s); };
+      chipsEl.appendChild(b);
+    });
+  }
+}
+function renderSummaryCompare(){
+  var monthB = document.getElementById('patternCompareB').value || todayISO().slice(0,7);
+  var monthA = document.getElementById('patternCompareA').value || shiftMonth(monthB, -1);
+  var box = document.getElementById('summaryContent');
+  var A = compareStats(monthA), B = compareStats(monthB);
+  function timeStr(v, n){ return n ? fmtClock(v)+' on '+n+' '+(n===1?'day':'days') : '—'; }
+  function tempStr(v){ return v===null ? '—' : v.toFixed(1)+'°C'; }
+  function sleepStr(v, n){ return n ? fmtMinutes(v)+' on '+n+' '+(n===1?'night':'nights') : '—'; }
+  function row(label, aVal, bVal){ return '<tr><td><strong>'+label+'</strong></td><td>'+aVal+'</td><td>'+bVal+'</td></tr>'; }
+  var monthNameA = MONTH_NAMES[Number(monthA.split('-')[1])-1], yearA = monthA.split('-')[0];
+  var monthNameB = MONTH_NAMES[Number(monthB.split('-')[1])-1], yearB = monthB.split('-')[0];
+  var html = '<h3>Comparing <button type="button" onclick="openMonthPicker(\'patternCompareA\', true)">📅 '+esc(monthNameA)+'</button> <button type="button" onclick="openYearPicker(\'patternCompareA\')">'+esc(yearA)+'</button> and <button type="button" onclick="openMonthPicker(\'patternCompareB\', true)">📅 '+esc(monthNameB)+'</button> <button type="button" onclick="openYearPicker(\'patternCompareB\')">'+esc(yearB)+'</button></h3>';
+  if(monthA===monthB) html += '<p>Both picks are the same month — pick two different months to compare.</p>';
+  html += '<table class="papergrid" style="width:100%"><thead><tr><th></th><th>'+esc(A.title)+'</th><th>'+esc(B.title)+'</th></tr></thead><tbody>';
+  html += row('Entries', A.entries, B.entries);
+  html += row('Days logged', A.days, B.days);
+  html += row('Good days', A.good, B.good);
+  html += row('Getting by days', A.mood.yellow, B.mood.yellow);
+  html += row('Tough days', A.mood.blue, B.mood.blue);
+  html += row('Hard days', A.mood.red, B.mood.red);
+  html += row('Tough or hard days', A.tough, B.tough);
+  html += row('Entries with a topic tapped', A.withSym, B.withSym);
+  html += row('Most frequent topic', A.symSorted.length ? esc(A.symSorted[0].s)+' — '+A.symSorted[0].c : '—', B.symSorted.length ? esc(B.symSorted[0].s)+' — '+B.symSorted[0].c : '—');
+  html += row('Average wake time', timeStr(A.wakeAvg, A.wakeN), timeStr(B.wakeAvg, B.wakeN));
+  html += row('Average bed time', timeStr(A.bedAvg, A.bedN), timeStr(B.bedAvg, B.bedN));
+  html += row('Average sleep', sleepStr(A.sleepAvg, A.sleepN), sleepStr(B.sleepAvg, B.sleepN));
+  html += row('Average high', tempStr(A.avgHigh), tempStr(B.avgHigh));
+  html += row('Average low', tempStr(A.avgLow), tempStr(B.avgLow));
+  html += row('Most common weather', A.mostCond ? esc(A.mostCond) : '—', B.mostCond ? esc(B.mostCond) : '—');
+  html += row('Average pressure', A.pressureN ? Math.round(A.avgPressure)+' hPa on '+A.pressureN+' '+(A.pressureN===1?'day':'days') : '—', B.pressureN ? Math.round(B.avgPressure)+' hPa on '+B.pressureN+' '+(B.pressureN===1?'day':'days') : '—');
+  html += row('Total precipitation', A.totalPrecip!==null ? A.totalPrecip.toFixed(1)+' mm on '+A.weatherN+' '+(A.weatherN===1?'day':'days') : '—', B.totalPrecip!==null ? B.totalPrecip.toFixed(1)+' mm on '+B.weatherN+' '+(B.weatherN===1?'day':'days') : '—');
+  html += '</tbody></table>';
+  var allSyms = {};
+  Object.keys(A.symCounts).forEach(function(s){ allSyms[s]=true; });
+  Object.keys(B.symCounts).forEach(function(s){ allSyms[s]=true; });
+  var symList = Object.keys(allSyms).map(function(s){ return {s:s, a:A.symCounts[s]||0, b:B.symCounts[s]||0}; }).sort(function(x,y){ return (y.a+y.b)-(x.a+x.b); });
+  if(symList.length){
+    html += '<h3>Topics compared</h3><p>How many entries each topic was tapped on.</p>';
+    html += '<table class="papergrid" style="width:100%"><thead><tr><th>Topic</th><th>'+esc(A.title)+'</th><th>'+esc(B.title)+'</th></tr></thead><tbody>';
+    symList.forEach(function(x){ html += '<tr><td>'+esc(x.s)+'</td><td>'+x.a+'</td><td>'+x.b+'</td></tr>'; });
+    html += '</tbody></table>';
+    html += '<h3>Tap a topic to see its days</h3><div class="chips" id="summaryChips"></div><div id="summaryDays"></div>';
+  } else {
+    html += '<p>No topics tapped in either month.</p>';
+  }
+  html += timelineSectionHTML();
+  if(monthA!==monthB){
+    var trends = analysisCompareText(A, B);
+    var cmpLabel = 'Comparing ' + MONTH_NAMES[parseInt(monthA.slice(5,7))-1] + ' to ' + MONTH_NAMES[parseInt(monthB.slice(5,7))-1];
+    if(monthA.slice(0,4)!==monthB.slice(0,4)) cmpLabel = 'Comparing ' + fmtMonth(monthA) + ' to ' + fmtMonth(monthB);
+    if(trends) html = '<h3>' + esc(cmpLabel) + ': What changed</h3><p>' + trends + '</p>' + html;
+  }
+  html += '<p class="small">This comparison shows summaries only. For the full list of entries, use a single month.</p>';
+  box.innerHTML = html;
+  var chipsEl = document.getElementById('summaryChips');
+  if(chipsEl){
+    chipsEl.innerHTML = '';
+    symList.forEach(function(x){
+      var b = document.createElement('button'); b.type='button'; b.className='chip'; b.textContent=x.s+' ('+(x.a+x.b)+')';
+      b.onclick = function(){ showSummaryDays(x.s); };
+      chipsEl.appendChild(b);
+    });
+  }
+}
+function showSummaryDays(sym){
+  var scope = document.getElementById('summaryScope').value;
+  var data = load();
+  if(scope==='compare'){
+    var tm = document.getElementById('patternCompareB').value || todayISO().slice(0,7), lm = document.getElementById('patternCompareA').value || shiftMonth(tm, -1);
+    data = data.filter(function(e){ return e.date.indexOf(tm)===0 || e.date.indexOf(lm)===0; });
+  } else if(scope==='year'){
+    var yr = document.getElementById('dashYear').value;
+    if(yr) data = data.filter(function(e){ return e.date.indexOf(yr+'-')===0; });
+  } else if(scope==='all'){
+    // no filter
+  } else {
+    var month = scope==='last' ? shiftMonth(todayISO().slice(0,7), -1) : scope==='month' ? document.getElementById('dashMonth').value : todayISO().slice(0,7);
+    if(month){ data = data.filter(function(e){ return e.date.indexOf(month)===0; }); }
+  }
+  var hits = data.filter(function(e){ return (e.symptoms||[]).indexOf(sym)>=0; }).sort(function(a,b){ return a.date.localeCompare(b.date); });
+  var el = document.getElementById('summaryDays'); if(!el) return;
+  el.innerHTML = '<h3>'+esc(sym)+'</h3>' + (hits.length ? hits.map(function(e){
+    return '<button type="button" class="dayrow" onclick="openDay(\''+e.date+'\')"><strong>'+esc(fmtDate(e.date))+(e.time?' at '+esc(fmtTime12(e.time)):'')+'</strong><br>'+esc(e.text)+'</button>';
+  }).join('') : '<p>None in this view.</p>');
+}
+function fmtMonth(ym){
+  var p = ym.split('-');
+  var d = new Date(Number(p[0]), Number(p[1])-1, 1);
+  return d.toLocaleDateString(undefined,{month:'long', year:'numeric'});
+}
+function populateDashYears(){
+  var sel = document.getElementById('dashYear');
+  var years = {};
+  load().forEach(function(e){ years[e.date.slice(0,4)] = true; });
+  var cy = String(new Date().getFullYear());
+  years[cy] = true;
+  for(var yy=2026; yy<=2040; yy++) years[String(yy)] = true;
+  var list = Object.keys(years).sort();
+  sel.innerHTML = list.map(function(y){ return '<option value="'+y+'">'+y+'</option>'; }).join('');
+  sel.value = cy;
+}
+function compareStats(ym){
+  var data = load().filter(function(e){ return e.date.indexOf(ym)===0; }).sort(function(a,b){ return a.date.localeCompare(b.date) || (a.time||'').localeCompare(b.time||''); });
+  var allDayMeta = loadDayMeta();
+  var metaDays = Object.keys(allDayMeta).filter(function(dt){ return dt.indexOf(ym)===0; });
+  var days = {};
+  data.forEach(function(e){ days[e.date]=true; });
+  metaDays.forEach(function(dt){ days[dt]=true; });
+  var mood = {blue:0, green:0, yellow:0, red:0};
+  var symCounts = {};
+  data.forEach(function(e){
+    if(e.mood && mood[e.mood]!==undefined) mood[e.mood]++;
+    (e.symptoms||[]).forEach(function(s){ symCounts[s]=(symCounts[s]||0)+1; });
+  });
+  var symSorted = Object.keys(symCounts).map(function(s){ return {s:s, c:symCounts[s]}; }).sort(function(a,b){ return b.c-a.c; });
+  var wakeMins = [], bedMins = [], sleepMins = [], highs = [], lows = [], precips = [], pressures = [], condCounts = {}, weatherN = 0;
+  metaDays.forEach(function(dt){
+    var mm = allDayMeta[dt] || {};
+    var w = timeToMinutes(mm.wake), b = timeToMinutes(mm.bed);
+    if(w!==null) wakeMins.push(w);
+    if(b!==null) bedMins.push(b < 720 ? b+1440 : b);
+    if(w!==null){
+      var prev = allDayMeta[prevISO(dt)] || {};
+      var pb = timeToMinutes(prev.bed);
+      if(pb!==null){
+        var dur = (w+1440) - pb;
+        if(dur>=180 && dur<=960) sleepMins.push(dur);
+      }
+    }
+    var mw = mm.weather;
+    if(mw){
+      weatherN++;
+      var hi = Number(mw.high), lo = Number(mw.low), pr = Number(mw.precip), ps = Number(mw.pressure);
+      if(!isNaN(hi)) highs.push(hi);
+      if(!isNaN(lo)) lows.push(lo);
+      if(!isNaN(pr)) precips.push(pr);
+      if(!isNaN(ps)) pressures.push(ps);
+      condCounts[mw.condition] = (condCounts[mw.condition]||0)+1;
+    }
+  });
+  function avg(arr){ if(!arr.length) return null; var s=0; arr.forEach(function(v){ s+=v; }); return s/arr.length; }
+  var mostCond = Object.keys(condCounts).sort(function(a,b){ return condCounts[b]-condCounts[a]; })[0];
+  return {title: fmtMonth(ym), entries: data.length, days: Object.keys(days).length, mood: mood, good: mood.green, tough: mood.blue + mood.red, withSym: data.filter(function(e){ return (e.symptoms||[]).length>0; }).length, symCounts: symCounts, symSorted: symSorted, wakeAvg: avg(wakeMins), wakeN: wakeMins.length, bedAvg: avg(bedMins), bedN: bedMins.length, sleepAvg: avg(sleepMins), sleepN: sleepMins.length, avgHigh: avg(highs), avgLow: avg(lows), mostCond: mostCond || null, avgPressure: avg(pressures), pressureN: pressures.length, totalPrecip: precips.length ? precips.reduce(function(a,b){ return a+b; },0) : null, weatherN: weatherN};
+}
+var moodPickerEntryId = null;
+var gridTimeEdit = null;
+function openMoodPicker(id){ moodPickerEntryId = id; document.getElementById('moodPickerOverlay').style.display = 'flex'; }
+function closeMoodPicker(){ moodPickerEntryId = null; document.getElementById('moodPickerOverlay').style.display = 'none'; }
+function setGridMood(mood){
+  if(!moodPickerEntryId) return;
+  var data = load();
+  data = data.map(function(e){ if(e.id===moodPickerEntryId){ e.mood = mood; if(mood!=='red') e.painLevel = null; } return e; });
+  save(data); closeMoodPicker(); renderGrid(); renderMonth();
+}
+function editGridTime(iso, field){
+  gridTimeEdit = {date: iso, field: field};
+  document.getElementById('entryDate').value = iso;
+  var meta = loadDayMeta()[iso] || {};
+  document.getElementById(field).value = meta[field==='wakeTime' ? 'wake' : 'bed'] || '';
+  openTimePicker(field);
+}
+function editGridNote(id){
+  var e = load().filter(function(x){ return x.id===id; })[0];
+  if(!e) return;
+  var line = document.getElementById('gridNoteLine-'+id);
+  if(!line) return;
+  line.removeAttribute('onclick');
+  line.innerHTML = '<textarea id="gridNoteEdit" style="width:100%;min-height:120px">'+esc(e.text||'')+'</textarea><br><button type="button" class="primary" onclick="event.stopPropagation(); saveGridNote(\''+id+'\')">Save note</button> <button type="button" onclick="event.stopPropagation(); renderGrid()">Cancel</button>';
+  var ta = document.getElementById('gridNoteEdit'); if(ta) ta.focus();
+}
+function saveGridNote(id){
+  var ta = document.getElementById('gridNoteEdit'); if(!ta) return;
+  var data = load();
+  data = data.map(function(e){ if(e.id===id){ e.text = endWithPeriod(ta.value); } return e; });
+  save(data); renderGrid(); renderMonth();
+}
+var gridAnchorYm = null;
+function renderGrid(){
+  var data = load();
+  var dayMeta = loadDayMeta();
+  var months = {};
+  if(!gridAnchorYm) gridAnchorYm = todayISO().slice(0,7);
+  for(var gi=-12; gi<=12; gi++){ months[shiftMonth(gridAnchorYm, gi)] = true; }
+  var monthList = Object.keys(months).sort();
+  if(!monthList.length){
+    document.getElementById('gridTable').innerHTML = '<p>No entries yet.</p>';
+    return;
+  }
+  var html = '';
+  monthList.forEach(function(gm){
+    var y = Number(gm.split('-')[0]), m = Number(gm.split('-')[1]);
+    var days = new Date(y, m, 0).getDate();
+    var monthName = MONTH_NAMES[m-1].toUpperCase();
+    var completeCount = 0;
+    for(var cd=1; cd<=days; cd++){
+      var ciso = y+'-'+String(m).padStart(2,'0')+'-'+String(cd).padStart(2,'0');
+      var cmeta = dayMeta[ciso] || {};
+      if(data.some(function(e){ return e.date===ciso; }) && cmeta.wake && cmeta.bed) completeCount++;
+    }
+    html += '<div class="month-divider" data-ym="'+gm+'">'+esc(monthName)+' '+y+' <span class="complete-count">· '+completeCount+' of '+days+' days complete</span></div>';
+    html += '<table class="papergrid"><thead><tr><th class="datecell">Date</th><th class="weekcell">Day</th><th class="notecell">Note — what happened</th><th class="wakecell">Wake</th><th class="bedcell">Bed</th><th class="weathercell">Weather / Sun</th></tr></thead><tbody>';
+    for(var d=1; d<=days; d++){
+      var iso = y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+      var dt = new Date(y, m-1, d);
+      var weekday = dt.toLocaleDateString(undefined,{weekday:'short'}).toUpperCase();
+      var es = data.filter(function(e){ return e.date===iso; }).sort(function(a,b){ return (a.time||'').localeCompare(b.time||''); });
+      var meta = dayMeta[iso] || {};
+      var note;
+      if(es.length){
+        note = es.map(function(e){ return '<div class="grid-note-line" id="gridNoteLine-'+e.id+'" onclick="editGridNote(\''+e.id+'\')"><button type="button" class="dot-btn" aria-label="Change colour for this note" onclick="event.stopPropagation(); openMoodPicker(\''+e.id+'\')"><span class="dot '+esc(e.mood||'none')+'"></span></button> ' + (e.time ? '<strong>'+esc(fmtTime12(e.time))+'</strong> — ' : '') + esc(e.text) + ((e.painLevel!==undefined && e.painLevel!==null) ? ' — Pain '+esc(e.painLevel) : '') + '</div>'; }).join('');
+      } else {
+        note = '';
+      }
+      var wakeCell = meta.wake ? '<span class="underlined">'+esc(fmtTime12(meta.wake))+'</span>' : '—';
+      var bedCell = meta.bed ? '<span class="underlined">'+esc(fmtTime12(meta.bed))+'</span>' : '—';
+      var sun = sunTimes(iso), moon = moonInfo(iso);
+      var savedW = meta.weather;
+      var weatherCell = SUNRISE_ICON+' '+esc(fmtTorontoTime(sun.sunrise))+' '+SUNSET_ICON+' '+esc(fmtTorontoTime(sun.sunset))+'<br>'+moon.icon+' '+esc(moon.phase)+' '+moon.illum+'%<br>' + (savedW ? esc(savedW.condition)+' '+esc(savedW.high)+'° / '+esc(savedW.low)+'°'+(savedW.pressure!==null && savedW.pressure!==undefined ? '<br>Pressure '+esc(Math.round(savedW.pressure))+' hPa' : '') : '<span class="small">Weather not saved</span>');
+      var action = es.length
+        ? '<button type="button" onclick="openDay(\''+iso+'\')">Open this day</button>'
+        : '<button type="button" style="margin-top:calc(16px * var(--scale))" onclick="openDay(\''+iso+'\')">Add a note for this day</button>';
+      var complete = es.length>0 && meta.wake && meta.bed;
+      html += '<tr data-iso="'+iso+'"><td class="datecell"><strong>'+d+'</strong>'+(complete ? ' <span class="day-complete">✓</span>' : '')+'</td><td class="weekcell">'+weekday+'</td><td class="notecell">'+(note ? note+'<br>' : '')+action+'</td><td class="wakecell" onclick="editGridTime(\''+iso+'\',\'wakeTime\')" title="Click to change wake time">'+wakeCell+'</td><td class="bedcell" onclick="editGridTime(\''+iso+'\',\'bedTime\')" title="Click to change bed time">'+bedCell+'</td><td class="weathercell">'+weatherCell+'</td></tr>';
+    }
+    html += '</tbody></table>';
+  });
+  document.getElementById('gridTable').innerHTML = html;
+  updateGridFixedHead();
+  monthList.forEach(function(gm){ if(monthFetchable(gm)) fetchMonthWeather(gm); });
+}
+function exportJSON(){
+  var blob = new Blob([JSON.stringify({version:1, entries:load(), dayMeta:loadDayMeta(), customSymptoms:customSymptoms, customPeople:customPeople, stories:loadStories()}, null, 2)], {type:'application/json'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'Wally_Health_Log_Backup.json';
+  a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+}
+function importJSON(ev){
+  var f = ev.target.files[0]; if(!f) return;
+  var r = new FileReader();
+  r.onload = function(){
+    try{
+      var d = JSON.parse(r.result);
+      var entries, meta;
+      if(Array.isArray(d)){ entries = d; meta = null; }
+      else if(d && Array.isArray(d.entries)){ entries = d.entries; meta = d.dayMeta || null; }
+      else throw new Error('not a backup');
+      save(entries);
+      try{ localStorage.removeItem(CLEARED_KEY); }catch(e){}
+      if(meta) saveDayMeta(meta);
+      if(Array.isArray(d.customSymptoms)) d.customSymptoms.forEach(function(s){ if(SYMPTOMS.indexOf(s)<0) SYMPTOMS.push(s); if(customSymptoms.indexOf(s)<0) customSymptoms.push(s); });
+      if(Array.isArray(d.customPeople)) d.customPeople.forEach(function(p){ if(customPeople.indexOf(p)<0) customPeople.push(p); addPersonToLists(p); });
+      if(Array.isArray(d.stories)) saveStories(d.stories);
+      saveCustomTags();
+      alert('Backup imported: '+entries.length+' entries'+(meta ? ' and wake/bed times.' : '.'));
+      populateDashYears();
+      renderDay(); renderMonth(); renderSummary(); renderGrid(); renderChips(); renderPeopleChips(); renderStories();
+    }catch(e){ alert('That file could not be imported. Please use a backup exported from this log.'); }
+  };
+  r.readAsText(f);
+}
+function readAloud(){
+  var t = document.getElementById('entryText').value.trim();
+  if(!t){ alert('Nothing to read yet. Record or type something first.'); return; }
+  if(!('speechSynthesis' in window)){ alert('Read aloud is not available on this device.'); return; }
+  window.speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(t);
+  u.rate = 0.9;
+  window.speechSynthesis.speak(u);
+}
+function micIdleLabel(){
+  return editingId ? 'Click to add to existing note' : 'Click to Record';
+}
+function setupVoice(){
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var note = document.getElementById('voiceNote');
+  if(!SR){
+    note.style.display='block';
+    note.innerHTML='<strong>Voice is not available in this browser.</strong> Try Chrome or Edge, or use your device keyboard dictation. You can still type in the big box.';
+    document.getElementById('micBtn').disabled = true;
+    return;
+  }
+  voiceSession++;
+  var mySession = voiceSession;
+  recognition = new SR();
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.lang = 'en-US';
+  recognition.onstart = function(){ if(mySession!==voiceSession) return; voiceStarted=true; voicePendingStart=false; voiceHadError=false; };
+  recognition.onresult = function(ev){
+    if(mySession!==voiceSession) return;
+    var interim = '';
+    var stopAsked = false;
+    for(var i=ev.resultIndex; i<ev.results.length; i++){
+      if(ev.results[i].isFinal){
+        var seg = cleanFillers((ev.results[i][0].transcript||'').trim());
+        seg = stripLeadingAnd(seg);
+        if(isStopCommand(seg)){
+          stopAsked = true;
+        } else if(isParagraphCommand(seg)){
+          if(finalText) finalText = finalText.replace(/\s+$/,'') + '\n\n';
+        } else if(seg){
+          seg = capFirst(seg);
+          if(!/[.?!…]$/.test(seg)) seg += '.';
+          finalText = finalText ? finalText + (/\n$/.test(finalText) ? '' : ' ') + seg : seg;
+        }
+      }
+      else interim += ev.results[i][0].transcript;
+    }
+    document.getElementById('entryText').value = interim ? (finalText ? finalText + (/\n$/.test(finalText) ? '' : ' ') + interim : interim).trim() : finalText;
+    if(stopAsked){
+      pendingMicTarget=null;
+      listening=false; voicePendingStart=false;
+      try{ recognition.stop(); }catch(e){}
+      document.getElementById('micBtn').textContent=micIdleLabel();
+    }
+  };
+  recognition.onend = function(){
+    if(mySession!==voiceSession) return;
+    if(listening && voiceStarted){ try{ recognition.start(); document.getElementById('micStatus').textContent='Listening… talk now. Press the yellow button again to stop.'; }catch(e){ listening=false; document.getElementById('micBtn').textContent=micIdleLabel(); document.getElementById('micStatus').textContent='Microphone could not start. Click the record button again.'; } }
+    else if(listening && voicePendingStart){
+      voicePendingStart=false;
+      try{ recognition.start(); }catch(e){ listening=false; document.getElementById('micBtn').textContent=micIdleLabel(); document.getElementById('micStatus').textContent='Microphone could not start. Click the record button again.'; }
+    }
+    else if(listening){
+      listening=false;
+      document.getElementById('micBtn').textContent=micIdleLabel();
+      if(voiceHadError){ voiceHadError=false; }
+      else { document.getElementById('micStatus').textContent='Microphone permission was not given. Click the record button again and choose "Allow while visiting the site". If no prompt appears, the mic is blocked for this file: click the icon at the left of the address bar, open Site settings, set Microphone to Allow, then reload this page.'; }
+    }
+    else if(voiceFatal){ voiceFatal=false; }
+    else { document.getElementById('micStatus').textContent='Check or edit the entry.'; document.getElementById('micBtn').textContent=micIdleLabel(); }
+    if(pendingMicTarget==='story'){ pendingMicTarget=null; startStoryMic(); }
+    else if(pendingMicTarget==='title'){ pendingMicTarget=null; startTitleMic(); }
+  };
+  recognition.onerror = function(ev){
+    if(mySession!==voiceSession) return;
+    voiceHadError=true;
+    var msg;
+    if(ev.error==='not-allowed') msg='Microphone is blocked for this file. Click the icon at the left of the address bar, open Site settings, set Microphone to Allow, then reload this page. You can still type in the big box.';
+    else if(ev.error==='service-not-allowed') msg='Chrome\'s speech service is not allowed here. You can still type in the big box.';
+    else if(ev.error==='audio-capture') msg='No microphone was found, or another app is using it. Close other apps using the mic and try again. You can still type in the big box.';
+    else if(ev.error==='network') msg='The speech service could not be reached. Check the internet connection and try again. You can still type in the big box.';
+    else msg='Microphone problem: '+ev.error+'. You can still type in the big box.';
+    document.getElementById('micStatus').textContent=msg;
+    if(ev.error==='not-allowed' || ev.error==='service-not-allowed' || ev.error==='audio-capture'){
+      listening=false; voiceFatal=true;
+      document.getElementById('micBtn').textContent=micIdleLabel();
+    }
+  };
+}
+function startRecordMic(){
+  setupVoice(); if(!recognition) return;
+  var rawText = document.getElementById('entryText').value;
+  var hadBreak = /\n\s*\n\s*$/.test(rawText);
+  finalText = rawText.trim();
+  if(finalText && !/[.?!…]$/.test(finalText)) finalText += '.';
+  if(hadBreak && finalText) finalText += '\n\n';
+  listening=true; voiceFatal=false; voiceStarted=false; voicePendingStart=false; voiceHadError=false;
+  try{ recognition.start(); }catch(e){ voicePendingStart=true; }
+  document.getElementById('micStatus').textContent = voicePendingStart ? 'Starting the microphone…' : 'Listening… talk now. Press the yellow button again to stop.';
+  document.getElementById('micBtn').textContent='■  Stop Recording';
+}
+function toggleMic(){
+  if(listening){
+    pendingMicTarget=null;
+    listening=false; voicePendingStart=false;
+    try{ recognition.stop(); }catch(e){}
+    document.getElementById('micBtn').textContent=micIdleLabel();
+  } else {
+    if(pendingMicTarget){ pendingMicTarget='record'; return; }
+    if(storyListening){
+      pendingMicTarget='record';
+      stopStoryMic();
+      document.getElementById('micStatus').textContent='Starting the microphone…';
+      document.getElementById('micBtn').textContent='■  Stop Recording';
+      return;
+    }
+    if(titleListening){
+      pendingMicTarget='record';
+      stopTitleMic();
+      document.getElementById('micStatus').textContent='Starting the microphone…';
+      document.getElementById('micBtn').textContent='■  Stop Recording';
+      return;
+    }
+    startRecordMic();
+  }
+}
+(function init(){
+  try{
+    var sc = localStorage.getItem('wallyHealthLog_scale');
+    if(sc) document.documentElement.style.setProperty('--scale', sc);
+  }catch(e){}
+  if(window.history && 'scrollRestoration' in window.history){ try{ window.history.scrollRestoration = 'manual'; }catch(e){} }
+  var now = new Date();
+  currentMonth = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0'); updateMonthTitle();
+  document.getElementById('dashMonth').value = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  var prevDate = new Date(now.getFullYear(), now.getMonth()-1, 1);
+  document.getElementById('patternCompareA').value = prevDate.getFullYear()+'-'+String(prevDate.getMonth()+1).padStart(2,'0');
+  document.getElementById('patternCompareB').value = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  document.getElementById('entryDate').value = todayISO();
+  renderChips(); renderPeopleChips(); populateDashYears();
+  setupVoice();
+  showView('month');
+  window.addEventListener('load', function(){ if(document.getElementById('viewMonth').style.display==='block') scrollToTodaySpread(); });
+  renderDay(); loadWakeBedForCurrentDate(); renderWeatherCard(); syncPickerDisplays(); autoFetchDayWeather(document.getElementById('entryDate').value);
+  markRecordClean();
+  repopulateWeatherAfterDelete();
+  setInterval(autoSaveTick, 1000);
+  window.addEventListener('resize', updateGridFixedHead);
+  window.addEventListener('scroll', updateGridFixedHead, {passive:true});
+  document.getElementById('gridTable').addEventListener('scroll', updateGridFixedHead, {passive:true});
+})();
+</script>
+</body>
+</html>
