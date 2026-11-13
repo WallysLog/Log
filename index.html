@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Wally's Log — V163</title>
+<title>Wally's Log — V164</title>
 <style>
 :root{ --scale:1; }
 *{box-sizing:border-box}
@@ -36,6 +36,18 @@ textarea{min-height:170px;line-height:1.45}
 .mic-row{display:flex;gap:12px}.mic-row .mic{flex:1 1 0;min-width:0}#addNewNoteBtn{flex:1 1 0;min-width:0;font-size:calc(30px * var(--scale))}
 .status{font-weight:700;margin:12px 0;min-height:1.4em}
 #storyMicStatus{margin:14px 0;min-height:0}
+.story-index-head{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
+.story-index-head h3{margin:0}
+#storyIndexStatus{margin:0;min-height:0}
+.export-choices{display:flex;flex-direction:column;gap:12px;margin:16px 0}
+.export-choices button{text-align:left}
+#storyPrintArea{display:none}
+#storyPrintArea h1{font-size:28px;margin:0 0 14px}
+#storyPrintArea p{margin:0 0 12px}
+@media print{
+  body.printing-story > *:not(#storyPrintArea){display:none !important}
+  body.printing-story #storyPrintArea{display:block !important}
+}
 #titleMicBtn{background:#ffcc00}
 #micStatus{margin:4px 0}
 #micStatus:empty{display:none}
@@ -297,7 +309,7 @@ section.card{margin:0 0 18px}
 <div class="header-title" id="titleRecord" style="display:none"><h2>Wally's Log: Record how you are feeling</h2></div>
 <div class="header-title" id="titleMonth"><h2 id="monthTitle">Wally's Log: This month</h2><div class="month-nav"><button type="button" onclick="changeMonth(-1)">◀ Previous month</button><button type="button" onclick="goToCurrentMonth()">Today</button><button type="button" onclick="changeMonth(1)">Next month ▶</button></div><div class="summary-actions"><button type="button" onclick="window.print()">Print</button></div></div>
 <div class="header-title" id="titleSummary" style="display:none"><h2>Wally's Log: Dashboard</h2><div class="summary-actions"><button type="button" onclick="window.print()">Print</button></div></div>
-<div class="header-title" id="titleStories" style="display:none"><h2>Wally's Log: Stories</h2><div class="summary-actions"><button type="button" id="storyIndexBtn" onclick="toggleStoryIndex()">View Index</button><button type="button" onclick="window.print()">Print</button></div></div>
+<div class="header-title" id="titleStories" style="display:none"><h2>Wally's Log: Stories</h2><div class="summary-actions"><button type="button" id="storyIndexBtn" onclick="toggleStoryIndex()">View Index</button><button type="button" onclick="openStoryExport('all')">Export all Stories</button><button type="button" onclick="window.print()">Print</button></div></div>
 <div class="header-title" id="titleGrid" style="display:none"><h2>Wally's Log: Grid View</h2><div class="month-nav"><button type="button" onclick="gridPrevMonth()">◀ Previous month</button><button type="button" onclick="gridToday()">Today</button><button type="button" onclick="gridNextMonth()">Next month ▶</button></div><div class="summary-actions"><button type="button" onclick="window.print()">Print</button></div></div>
 <div class="header-title" id="titleHelp" style="display:none"><h2>Wally's Log: Help &amp; Backup</h2><div class="summary-actions" aria-label="Text size"><button type="button" onclick="changeScale(-0.15)">Text Smaller</button><button type="button" onclick="changeScale(0.15)">Text Bigger</button></div></div>
 </div>
@@ -400,7 +412,7 @@ section.card{margin:0 0 18px}
 <p class="status" id="storySaveStatus" role="status"></p>
 </div>
 <div id="storyIndexWrap" style="display:none">
-<h3>Stories</h3>
+<div class="story-index-head"><h3>Stories</h3><span class="status" id="storyIndexStatus" role="status"></span></div>
 <div id="storyList"></div>
 </div>
 </section>
@@ -423,7 +435,7 @@ section.card{margin:0 0 18px}
 <p><strong>Journal View:</strong> The month as an open notebook — two pages side by side, a large day number and month at the top of each page, the weekday, ruled lines, your entries, Wake, Bed and Sleep, and weather, with the week number at the foot of each page. The heading is simply the month itself, for example November 2026. Use Previous, Today and Next to move between months. Tap any day to record or edit it; a blank day shows only an "Add a note for this day" button.</p>
 <p><strong>Grid View:</strong> The same notes laid out like his paper page — date, weekday, note (with its mood dot at the start, and each note's time), Wake, Bed, Weather / Sun, one row for every day, with all entered months shown one after another separated by a horizontal month divider, at full browser width. Tap "Add a note for this day" on a blank day, or "Open this day" on a day that has a note, to record or edit it in full — or edit right here: tap a dot to change the mood, tap a note to edit its words, or tap a Wake or Bed time to change it.</p>
 <p><strong>Dashboard:</strong> A one-page summary — totals, mood counts, topics, who entries were about, wake/bed/sleep averages, weather averages, and every entry in that period. Choose This Month, Last Month, Pick a Month, All Time, or One Year to look at one period, or Compare Months to see two months side by side. Tap a topic to see its days. Print sits on the Dashboard title row, so it is always in reach.</p>
-<p><strong>Stories:</strong> Life stories, in your own words. Start the recording with a title — the first sentence you say or type becomes the title in the Index. Each finished sentence saves itself, so there is no need to press Save. Say "Paragraph" while recording to start a new paragraph, and "Stop recording" to stop. When the recording stops, a title box appears under the story — type a title there, or tap "Record Title" beside it to say the title instead, and the title saves itself when that recording stops. "Save this story" saves the story and any typed title together, or leave it blank. The title goes on the first line, with a blank line under it, and the words you recorded stay exactly as they were. "Clean Up Text" tidies the sentences: it drops a leading "And" from each one, capitalises the start of every sentence, and fixes a lone "i" to "I". Tap "View Index" in the Stories title bar to see all the titles, newest first; tap a title there to change it — the new title goes on the first line, with a blank line under it, and the words you recorded stay exactly as they were. Use the View, Edit and Delete buttons beside a title to read it, change it, or remove it.</p>
+<p><strong>Stories:</strong> Life stories, in your own words. Start the recording with a title — the first sentence you say or type becomes the title in the Index. Each finished sentence saves itself, so there is no need to press Save. Say "Paragraph" while recording to start a new paragraph, and "Stop recording" to stop. When the recording stops, a title box appears under the story — type a title there, or tap "Record Title" beside it to say the title instead, and the title saves itself when that recording stops. "Save this story" saves the story and any typed title together, or leave it blank. The title goes on the first line, with a blank line under it, and the words you recorded stay exactly as they were. "Clean Up Text" tidies the sentences: it drops a leading "And" from each one, capitalises the start of every sentence, and fixes a lone "i" to "I". Tap "View Index" in the Stories title bar to see all the titles, newest first; tap a title there to change it — the new title goes on the first line, with a blank line under it, and the words you recorded stay exactly as they were. Use the Copy, Export, View, Edit and Delete buttons beside a title to copy it to the clipboard, save it as a Word, text or PDF file, read it, change it, or remove it. "Export all Stories" in the Stories title bar saves every story into one Word, text or PDF file.</p>
 <p><strong>Weather:</strong> Toronto weather is fetched and saved automatically when you open a day, Journal View, or Grid View (needs internet). It shows in Journal View, Grid View, and Dashboard.</p>
 <p><strong>Backup:</strong> This log lives only in this browser on this device. Export a backup now and then, and keep the file somewhere safe. The backup includes notes, wake/bed times, saved weather, any topics or people you added, and stories. Older backups with notes only still import.</p>
 <p>
@@ -437,7 +449,7 @@ section.card{margin:0 0 18px}
 </p>
 </section>
 </main>
-<footer class="small">Wally's Log — V163 — large print, voice-first, private to this device.</footer>
+<footer class="small">Wally's Log — V164 — large print, voice-first, private to this device.</footer>
 
 <div id="datePickerOverlay" class="picker-overlay" style="display:none" role="dialog" aria-modal="true" aria-label="Pick a day">
 <div class="picker-card">
@@ -532,6 +544,22 @@ section.card{margin:0 0 18px}
 <p class="unsaved-row"><button type="button" onclick="unsavedDiscard()">Leave without saving</button> <button type="button" onclick="unsavedKeep()">Keep editing</button> <button type="button" class="primary" onclick="unsavedSave()">Save this entry</button></p>
 </div>
 </div>
+
+<div id="storyExportModal" class="picker-overlay" style="display:none" role="dialog" aria-modal="true" aria-label="Export story">
+<div class="picker-card">
+<h3 id="storyExportTitle">Export this story</h3>
+<p id="storyExportSub"></p>
+<div class="export-choices" id="storyExportChoices">
+<button type="button" onclick="exportStoryChoice('docx')">DOCX <span class="small">— opens in Word</span></button>
+<button type="button" onclick="exportStoryChoice('txt')">TXT <span class="small">— plain text file</span></button>
+<button type="button" onclick="exportStoryChoice('pdf')">PDF <span class="small">— print it, or save as PDF</span></button>
+</div>
+<p class="unsaved-row"><button type="button" onclick="closeStoryExport()">Cancel</button></p>
+</div>
+</div>
+
+<div id="storyPrintArea"></div>
+
 <div id="tlTooltip" role="tooltip"></div>
 
 <script>
@@ -2127,12 +2155,267 @@ function renderStories(){
   var list = document.getElementById('storyList');
   if(!list) return;
   if(document.activeElement && document.activeElement.classList && document.activeElement.classList.contains('storyTitleInput')) return;
-  var stories = loadStories().slice().sort(function(a,b){ return (b.created||'').localeCompare(a.created||'') || (b.id||'').localeCompare(a.id||''); });
+  var stories = sortedStories();
   if(!stories.length){ list.innerHTML = '<p>No stories yet. Tap "Back to Stories" and record or type your first one.</p>'; return; }
   list.innerHTML = stories.map(function(s){
     var title = storyTitle(s);
-    return '<div class="entry"><div class="storyRow"><input type="text" class="storyTitleInput" value="'+esc(title)+'" data-id="'+esc(s.id)+'" onchange="storyTitleChanged(this)"><button type="button" onclick="viewStory(\''+esc(s.id)+'\')">View</button><button type="button" onclick="editStory(\''+esc(s.id)+'\')">Edit</button><button type="button" class="danger" onclick="deleteStory(\''+esc(s.id)+'\')">Delete</button></div><span class="small">'+esc(fmtDate(s.created))+'</span></div>';
+    return '<div class="entry"><div class="storyRow"><input type="text" class="storyTitleInput" value="'+esc(title)+'" data-id="'+esc(s.id)+'" onchange="storyTitleChanged(this)"><button type="button" onclick="copyStory(\''+esc(s.id)+'\')">Copy</button><button type="button" onclick="openStoryExport(\''+esc(s.id)+'\')">Export</button><button type="button" onclick="viewStory(\''+esc(s.id)+'\')">View</button><button type="button" onclick="editStory(\''+esc(s.id)+'\')">Edit</button><button type="button" class="danger" onclick="deleteStory(\''+esc(s.id)+'\')">Delete</button></div><span class="small">'+esc(fmtDate(s.created))+'</span></div>';
   }).join('');
+}
+/* Stories newest first, as the Index shows them. */
+function sortedStories(){
+  return loadStories().slice().sort(function(a,b){ return (b.created||'').localeCompare(a.created||'') || (b.id||'').localeCompare(a.id||''); });
+}
+/* The story body without its title, so the title is not printed twice when the title and the story are copied or exported together. */
+function storyBodyText(s){
+  var t = s.text||'';
+  if(s.titleLine){
+    var nl = t.indexOf('\n');
+    return nl<0 ? '' : t.slice(nl+1).replace(/^\s+/,'');
+  }
+  var first = storyTitleFromText(t);
+  if(first && t.indexOf(first)===0) return t.slice(first.length).replace(/^\s+/,'');
+  return t;
+}
+/* Title, a blank line, then the body — the form a story takes when it leaves the log. */
+function storyCopyText(s){
+  var title = storyTitle(s);
+  var body = storyBodyText(s);
+  return body ? title + '\n\n' + body : title;
+}
+var storyIndexStatusTimer = null;
+function setStoryIndexStatus(msg){
+  var el = document.getElementById('storyIndexStatus');
+  if(!el) return;
+  el.textContent = msg;
+  if(storyIndexStatusTimer) clearTimeout(storyIndexStatusTimer);
+  storyIndexStatusTimer = setTimeout(function(){ el.textContent=''; }, 4000);
+}
+function fallbackCopyText(text){
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.setAttribute('readonly','');
+  ta.style.position = 'fixed'; ta.style.top = '0'; ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  var ok = false;
+  try{ ok = document.execCommand('copy'); }catch(e){ ok = false; }
+  document.body.removeChild(ta);
+  return ok;
+}
+function copyTextToClipboard(text, done){
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){ done(true); }, function(){ done(fallbackCopyText(text)); });
+  } else {
+    done(fallbackCopyText(text));
+  }
+}
+function copyStory(id){
+  var s = loadStories().filter(function(x){ return x.id===id; })[0];
+  if(!s) return;
+  copyTextToClipboard(storyCopyText(s), function(ok){
+    setStoryIndexStatus(ok ? 'Copied to the clipboard. You can paste it into another document.' : 'Could not copy. Try again, or use Export instead.');
+  });
+}
+function safeStoryFilename(name){
+  var n = String(name||'').replace(/[\/\\:*?"<>|\x00-\x1f]/g,'').replace(/\s+/g,' ').trim().replace(/[. ]+$/,'');
+  if(!n) n = 'Story';
+  if(n.length>80) n = n.slice(0,80).trim().replace(/[. ]+$/,'');
+  return n;
+}
+function downloadFile(name, mime, content){
+  var blob = new Blob([content], {type:mime});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+}
+function escXml(s){
+  return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+var CRC_TABLE = (function(){
+  var t = [], c;
+  for(var n=0;n<256;n++){
+    c=n;
+    for(var k=0;k<8;k++) c = (c&1) ? (0xEDB88320 ^ (c>>>1)) : (c>>>1);
+    t[n]=c>>>0;
+  }
+  return t;
+})();
+function crc32(bytes){
+  var crc = 0xFFFFFFFF;
+  for(var i=0;i<bytes.length;i++) crc = CRC_TABLE[(crc ^ bytes[i]) & 0xFF] ^ (crc>>>8);
+  return (crc ^ 0xFFFFFFFF)>>>0;
+}
+function dosDateTime(d){
+  var time = ((d.getHours() & 31)<<11) | ((d.getMinutes() & 63)<<5) | ((Math.floor(d.getSeconds()/2)) & 31);
+  var date = (((d.getFullYear()-1980) & 127)<<9) | (((d.getMonth()+1) & 15)<<5) | (d.getDate() & 31);
+  return {time:time, date:date};
+}
+/* Minimal ZIP writer: stored (uncompressed) entries only. Enough for a Word file, and small enough to live in this page. */
+function zipStore(files){
+  var enc = new TextEncoder();
+  var localParts = [], centralParts = [], offset = 0;
+  function u16(n){ return [n & 0xFF, (n>>>8) & 0xFF]; }
+  function u32(n){ return [n & 0xFF, (n>>>8) & 0xFF, (n>>>16) & 0xFF, (n>>>24) & 0xFF]; }
+  files.forEach(function(f){
+    var nameBytes = enc.encode(f.name);
+    var crc = crc32(f.data);
+    var dos = dosDateTime(new Date());
+    var local = [0x50,0x4B,0x03,0x04];
+    local.push.apply(local, u16(20));
+    local.push.apply(local, u16(0x0800));
+    local.push.apply(local, u16(0));
+    local.push.apply(local, u16(dos.time));
+    local.push.apply(local, u16(dos.date));
+    local.push.apply(local, u32(crc));
+    local.push.apply(local, u32(f.data.length));
+    local.push.apply(local, u32(f.data.length));
+    local.push.apply(local, u16(nameBytes.length));
+    local.push.apply(local, u16(0));
+    var localHeader = new Uint8Array(local);
+    var central = [0x50,0x4B,0x01,0x02];
+    central.push.apply(central, u16(20));
+    central.push.apply(central, u16(20));
+    central.push.apply(central, u16(0x0800));
+    central.push.apply(central, u16(0));
+    central.push.apply(central, u16(dos.time));
+    central.push.apply(central, u16(dos.date));
+    central.push.apply(central, u32(crc));
+    central.push.apply(central, u32(f.data.length));
+    central.push.apply(central, u32(f.data.length));
+    central.push.apply(central, u16(nameBytes.length));
+    central.push.apply(central, u16(0));
+    central.push.apply(central, u16(0));
+    central.push.apply(central, u16(0));
+    central.push.apply(central, u16(0));
+    central.push.apply(central, u32(0));
+    central.push.apply(central, u32(offset));
+    var centralHeader = new Uint8Array(central);
+    localParts.push(localHeader, nameBytes, f.data);
+    centralParts.push(centralHeader, nameBytes);
+    offset += localHeader.length + nameBytes.length + f.data.length;
+  });
+  var centralSize = centralParts.reduce(function(a,p){ return a+p.length; }, 0);
+  var eocd = [0x50,0x4B,0x05,0x06];
+  eocd.push.apply(eocd, u16(0));
+  eocd.push.apply(eocd, u16(0));
+  eocd.push.apply(eocd, u16(files.length));
+  eocd.push.apply(eocd, u16(files.length));
+  eocd.push.apply(eocd, u32(centralSize));
+  eocd.push.apply(eocd, u32(offset));
+  eocd.push.apply(eocd, u16(0));
+  var out = new Uint8Array(offset + centralSize + 22);
+  var pos = 0;
+  localParts.concat(centralParts).concat([new Uint8Array(eocd)]).forEach(function(p){ out.set(p, pos); pos += p.length; });
+  return out;
+}
+/* One story in a Word file: its title as a heading, then its paragraphs. A page break starts each story after the first. */
+function docxBodyXml(stories){
+  var parts = [];
+  stories.forEach(function(s, idx){
+    if(idx>0) parts.push('<w:p><w:r><w:br w:type="page"/></w:r></w:p>');
+    parts.push('<w:p><w:pPr><w:pStyle w:val="Heading1"/></w:pPr><w:r><w:t xml:space="preserve">'+escXml(storyTitle(s))+'</w:t></w:r></w:p>');
+    storyBodyText(s).split(/\n\s*\n/).forEach(function(para){
+      para = para.replace(/^\s+|\s+$/g,'');
+      if(!para) return;
+      var lines = para.split('\n').map(function(ln){ return ln.replace(/^\s+|\s+$/g,''); }).filter(function(ln){ return ln.length>0; });
+      if(!lines.length) return;
+      var runs = lines.map(function(ln){ return '<w:r><w:t xml:space="preserve">'+escXml(ln)+'</w:t></w:r>'; }).join('<w:r><w:br/></w:r>');
+      parts.push('<w:p>'+runs+'</w:p>');
+    });
+  });
+  return parts.join('');
+}
+function buildDocx(stories){
+  var enc = new TextEncoder();
+  var contentTypes = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/></Types>';
+  var rels = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>';
+  var docRels = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>';
+  var styles = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Calibri"/><w:sz w:val="24"/><w:szCs w:val="24"/><w:lang w:val="en-CA"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="160" w:line="276" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults><w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/></w:style><w:style w:type="paragraph" w:styleId="Heading1"><w:name w:val="heading 1"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:pPr><w:keepNext/><w:spacing w:before="360" w:after="160"/><w:outlineLvl w:val="0"/></w:pPr><w:rPr><w:b/><w:sz w:val="36"/><w:szCs w:val="36"/></w:rPr></w:style></w:styles>';
+  var document = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+docxBodyXml(stories)+'<w:sectPr><w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="720" w:footer="720" w:gutter="0"/></w:sectPr></w:body></w:document>';
+  return zipStore([
+    {name:'[Content_Types].xml', data:enc.encode(contentTypes)},
+    {name:'_rels/.rels', data:enc.encode(rels)},
+    {name:'word/_rels/document.xml.rels', data:enc.encode(docRels)},
+    {name:'word/document.xml', data:enc.encode(document)},
+    {name:'word/styles.xml', data:enc.encode(styles)}
+  ]);
+}
+var exportStoryTarget = null;
+function storyExportStories(){
+  if(exportStoryTarget==='all') return sortedStories();
+  var s = loadStories().filter(function(x){ return x.id===exportStoryTarget; })[0];
+  return s ? [s] : [];
+}
+function openStoryExport(target){
+  exportStoryTarget = target;
+  var stories = storyExportStories();
+  var titleEl = document.getElementById('storyExportTitle');
+  var subEl = document.getElementById('storyExportSub');
+  var choicesEl = document.getElementById('storyExportChoices');
+  if(target==='all'){
+    titleEl.textContent = 'Export all stories';
+    if(!stories.length){
+      subEl.textContent = 'No stories to export yet.';
+      choicesEl.style.display = 'none';
+    } else {
+      subEl.textContent = stories.length + (stories.length===1 ? ' story' : ' stories') + ' — newest first. Choose a file type.';
+      choicesEl.style.display = '';
+    }
+  } else {
+    var s = stories[0];
+    if(!s) return;
+    titleEl.textContent = 'Export this story';
+    subEl.textContent = storyTitle(s);
+    choicesEl.style.display = '';
+  }
+  document.getElementById('storyExportModal').style.display = 'flex';
+}
+function closeStoryExport(){
+  document.getElementById('storyExportModal').style.display = 'none';
+}
+function exportStoryChoice(fmt){
+  var stories = storyExportStories();
+  if(!stories.length){ closeStoryExport(); return; }
+  var isAll = (exportStoryTarget==='all');
+  if(fmt==='txt'){
+    var txt = stories.map(function(s){ return storyCopyText(s); }).join('\n\n\n');
+    downloadFile(isAll ? 'Wallys-Stories.txt' : safeStoryFilename(storyTitle(stories[0]))+'.txt', 'text/plain;charset=utf-8', txt);
+    closeStoryExport();
+    setStoryIndexStatus(isAll ? 'All stories exported as a text file.' : 'Story exported as a text file.');
+  } else if(fmt==='docx'){
+    downloadFile(isAll ? 'Wallys-Stories.docx' : safeStoryFilename(storyTitle(stories[0]))+'.docx', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', buildDocx(stories));
+    closeStoryExport();
+    setStoryIndexStatus(isAll ? 'All stories exported as a Word file.' : 'Story exported as a Word file.');
+  } else if(fmt==='pdf'){
+    closeStoryExport();
+    printStoriesPdf(stories);
+  }
+}
+/* PDF uses the print dialog: the stories are laid out on their own page, then the browser prints them. Choose "Save as PDF" in the dialog to keep a PDF file. */
+function printStoriesPdf(stories){
+  var area = document.getElementById('storyPrintArea');
+  if(!area) return;
+  area.innerHTML = stories.map(function(s){
+    var paras = storyBodyText(s).split(/\n\s*\n/).map(function(para){
+      para = para.replace(/^\s+|\s+$/g,'');
+      return para ? '<p>'+esc(para).replace(/\n/g,'<br>')+'</p>' : '';
+    }).join('');
+    return '<h1>'+esc(storyTitle(s))+'</h1>'+paras;
+  }).join('');
+  document.body.classList.add('printing-story');
+  var done = false;
+  function cleanup(){
+    if(done) return; done = true;
+    document.body.classList.remove('printing-story');
+    area.innerHTML = '';
+    window.onafterprint = null;
+  }
+  window.onafterprint = cleanup;
+  window.print();
+  setTimeout(cleanup, 60000);
 }
 function showStoryForm(){
   document.getElementById('storyFormWrap').style.display='';
