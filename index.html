@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Wally's Log — V164</title>
+<title>Wally's Log — V166</title>
 <style>
 :root{ --scale:1; }
 *{box-sizing:border-box}
@@ -428,6 +428,15 @@ section.card{margin:0 0 18px}
 
 <!-- HELP -->
 <section class="card" id="viewHelp" style="display:none">
+<p><strong>Backup:</strong> This log lives only in this browser on this device. Export a backup now and then, and keep the file somewhere safe. The backup includes notes, wake/bed times, saved weather, any topics or people you added, and stories. Older backups with notes only still import.</p>
+<p>
+<button type="button" class="primary" onclick="exportJSON()">Export backup file</button>
+<button type="button" onclick="document.getElementById('importFile').click()">Import backup file</button>
+<button type="button" onclick="chooseBackupFolder()">Choose backup folder</button>
+<input type="file" id="importFile" accept=".json,application/json" style="display:none" onchange="importJSON(event)">
+</p>
+<p class="small" id="backupFolderStatus">Backups save to your Downloads folder.</p>
+<p class="small">All entries remain only on this computer; nothing is uploaded to the internet by this application. Data is saved in the browser's local memory, but it is a good idea to make a "Backup File" every month to ensure nothing accidentally gets deleted from the browser memory.</p>
 <p><strong>To use it every day:</strong> Open this file in Chrome or Edge on a computer, tablet or phone. On a phone, use Share, then Add to Home Screen, so it opens like an app with one tap. Text Smaller and Text Bigger at the top right change the print size.</p>
 <p><strong>Voice:</strong> Voice typing works best in Chrome or Edge. If the microphone button says it is not supported, type or dictate with your device keyboard instead — the big text box still works.</p>
 <p><strong>Record today:</strong> Tap "Click to Record" and speak, or type in the big text box. Pick how the day was, tap any topics and people, and set the day, the time of the note, and Wake and Bed times if you know them. Tap "Save this entry" — Wake and Bed are saved with the entry. While editing an entry you can delete it, and on a day with more than one note you can switch between them. When a day already has a note, the record button reads "Click to add to existing note" and a second button, "Add new note for the same day", appears beside it.</p>
@@ -437,19 +446,13 @@ section.card{margin:0 0 18px}
 <p><strong>Dashboard:</strong> A one-page summary — totals, mood counts, topics, who entries were about, wake/bed/sleep averages, weather averages, and every entry in that period. Choose This Month, Last Month, Pick a Month, All Time, or One Year to look at one period, or Compare Months to see two months side by side. Tap a topic to see its days. Print sits on the Dashboard title row, so it is always in reach.</p>
 <p><strong>Stories:</strong> Life stories, in your own words. Start the recording with a title — the first sentence you say or type becomes the title in the Index. Each finished sentence saves itself, so there is no need to press Save. Say "Paragraph" while recording to start a new paragraph, and "Stop recording" to stop. When the recording stops, a title box appears under the story — type a title there, or tap "Record Title" beside it to say the title instead, and the title saves itself when that recording stops. "Save this story" saves the story and any typed title together, or leave it blank. The title goes on the first line, with a blank line under it, and the words you recorded stay exactly as they were. "Clean Up Text" tidies the sentences: it drops a leading "And" from each one, capitalises the start of every sentence, and fixes a lone "i" to "I". Tap "View Index" in the Stories title bar to see all the titles, newest first; tap a title there to change it — the new title goes on the first line, with a blank line under it, and the words you recorded stay exactly as they were. Use the Copy, Export, View, Edit and Delete buttons beside a title to copy it to the clipboard, save it as a Word, text or PDF file, read it, change it, or remove it. "Export all Stories" in the Stories title bar saves every story into one Word, text or PDF file.</p>
 <p><strong>Weather:</strong> Toronto weather is fetched and saved automatically when you open a day, Journal View, or Grid View (needs internet). It shows in Journal View, Grid View, and Dashboard.</p>
-<p><strong>Backup:</strong> This log lives only in this browser on this device. Export a backup now and then, and keep the file somewhere safe. The backup includes notes, wake/bed times, saved weather, any topics or people you added, and stories. Older backups with notes only still import.</p>
-<p>
-<button type="button" class="primary" onclick="exportJSON()">Export backup file</button>
-<button type="button" onclick="document.getElementById('importFile').click()">Import backup file</button>
-<input type="file" id="importFile" accept=".json,application/json" style="display:none" onchange="importJSON(event)">
-</p>
-<p class="small">If you switch devices, import the backup file on the new device. Nothing is uploaded to the internet by this page.</p>
+
 <p>
 <button type="button" class="danger" onclick="openClearDataModal()">Delete all Data</button>
 </p>
 </section>
 </main>
-<footer class="small">Wally's Log — V164 — large print, voice-first, private to this device.</footer>
+<footer class="small">Wally's Log — V166 — large print, voice-first, private to this device.</footer>
 
 <div id="datePickerOverlay" class="picker-overlay" style="display:none" role="dialog" aria-modal="true" aria-label="Pick a day">
 <div class="picker-card">
@@ -3243,13 +3246,165 @@ function renderGrid(){
   updateGridFixedHead();
   monthList.forEach(function(gm){ if(monthFetchable(gm)) fetchMonthWeather(gm); });
 }
-function exportJSON(){
-  var blob = new Blob([JSON.stringify({version:1, entries:load(), dayMeta:loadDayMeta(), customSymptoms:customSymptoms, customPeople:customPeople, stories:loadStories()}, null, 2)], {type:'application/json'});
-  var a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'Wally_Health_Log_Backup.json';
-  a.click();
-  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+async function exportJSON(){
+  var data;
+  try {
+    data = JSON.stringify({version:1, entries:load(), dayMeta:loadDayMeta(), customSymptoms:customSymptoms, customPeople:customPeople, stories:loadStories()}, null, 2);
+  } catch(e){
+    setBackupFolderStatus('The backup could not be made.');
+    return;
+  }
+  var savedToFolder = false;
+  try { savedToFolder = await trySaveBackupToFolder(data); } catch(e){ savedToFolder = false; }
+  if(savedToFolder) return;
+  try {
+    var blob = new Blob([data], {type:'application/json'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'Wally_Health_Log_Backup.json';
+    a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+    if(backupFolderHandle){
+      setBackupFolderStatus('The chosen folder could not be used, so the backup downloaded to your Downloads folder instead.');
+    } else {
+      setBackupFolderStatus('Backup downloaded to your Downloads folder.');
+    }
+  } catch(e){
+    setBackupFolderStatus('The backup could not be saved.');
+  }
+}
+// --- Backup folder: save exports into a folder Wally picks once ---
+// A web page cannot choose a folder on its own, so this uses the browser's
+// File System Access API (Chrome/Edge, from the link — https only). The
+// picked folder's handle is kept in IndexedDB so it survives reloads.
+// Exports into the folder get a dated name, so each one is a new file
+// (the same as Downloads, where the browser numbers the copies). If the
+// folder cannot be used, the export falls back to the usual download.
+var backupFolderHandle = null;
+function setBackupFolderStatus(msg){
+  var el = document.getElementById('backupFolderStatus');
+  if(el) el.textContent = msg;
+}
+function backupStamp(d){
+  function p(n){ return String(n).padStart(2,'0'); }
+  return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'_'+p(d.getHours())+p(d.getMinutes());
+}
+function backupFolderDB(){
+  return new Promise(function(resolve, reject){
+    if(!window.indexedDB){ reject(new Error('no indexedDB')); return; }
+    var req;
+    try { req = window.indexedDB.open('wallyHealthLogBackupFolder', 1); }
+    catch(e){ reject(e); return; }
+    req.onupgradeneeded = function(){
+      try { if(!req.result.objectStoreNames.contains('kv')) req.result.createObjectStore('kv'); } catch(e){}
+    };
+    req.onsuccess = function(){ resolve(req.result); };
+    req.onerror = function(){ reject(req.error || new Error('indexedDB open failed')); };
+    req.onblocked = function(){ reject(new Error('indexedDB blocked')); };
+  });
+}
+function saveBackupFolderHandle(handle){
+  return backupFolderDB().then(function(db){
+    return new Promise(function(resolve, reject){
+      var tx, store, putReq;
+      try {
+        tx = db.transaction('kv', 'readwrite');
+        store = tx.objectStore('kv');
+        putReq = store.put(handle, 'folder');
+      } catch(e){ reject(e); return; }
+      putReq.onsuccess = function(){ resolve(); };
+      putReq.onerror = function(){ reject(putReq.error || new Error('put failed')); };
+      tx.onerror = function(){ reject(tx.error || new Error('tx failed')); };
+    });
+  });
+}
+function loadBackupFolderHandle(){
+  return backupFolderDB().then(function(db){
+    return new Promise(function(resolve, reject){
+      var tx, store, getReq;
+      try {
+        tx = db.transaction('kv', 'readonly');
+        store = tx.objectStore('kv');
+        getReq = store.get('folder');
+      } catch(e){ reject(e); return; }
+      getReq.onsuccess = function(){ resolve(getReq.result || null); };
+      getReq.onerror = function(){ reject(getReq.error || new Error('get failed')); };
+    });
+  }).catch(function(){ return null; });
+}
+async function folderWritable(handle){
+  try {
+    if(handle.queryPermission){
+      var p = await handle.queryPermission({mode:'readwrite'});
+      if(p === 'granted') return true;
+      if(handle.requestPermission){
+        p = await handle.requestPermission({mode:'readwrite'});
+        return p === 'granted';
+      }
+      return false;
+    }
+    return true;
+  } catch(e){ return false; }
+}
+async function chooseBackupFolder(){
+  if(!window.showDirectoryPicker){
+    setBackupFolderStatus('Choosing a folder needs this page opened from the link in Chrome or Edge. Backups will keep saving to Downloads.');
+    return;
+  }
+  var handle;
+  try {
+    handle = await window.showDirectoryPicker({mode:'readwrite'});
+  } catch(e){
+    if(e && e.name === 'AbortError') return;
+    setBackupFolderStatus('That folder could not be chosen. Backups will keep saving to Downloads.');
+    return;
+  }
+  var ok = await folderWritable(handle);
+  if(!ok){
+    setBackupFolderStatus('That folder was not allowed. Backups will keep saving to Downloads.');
+    return;
+  }
+  try {
+    await saveBackupFolderHandle(handle);
+  } catch(e){
+    setBackupFolderStatus('That folder could not be remembered. Backups will keep saving to Downloads.');
+    return;
+  }
+  backupFolderHandle = handle;
+  setBackupFolderStatus('Backups will save to the folder: ' + handle.name + '.');
+}
+async function trySaveBackupToFolder(data){
+  if(!window.showDirectoryPicker) return false;
+  if(!backupFolderHandle){
+    backupFolderHandle = await loadBackupFolderHandle();
+  }
+  if(!backupFolderHandle) return false;
+  var ok = await folderWritable(backupFolderHandle);
+  if(!ok) return false;
+  try {
+    var fname = 'Wally_Health_Log_Backup_' + backupStamp(new Date()) + '.json';
+    var fh = await backupFolderHandle.getFileHandle(fname, {create:true});
+    var w = await fh.createWritable();
+    await w.write(data);
+    await w.close();
+    setBackupFolderStatus('Backup saved to ' + backupFolderHandle.name + '.');
+    return true;
+  } catch(e){
+    return false;
+  }
+}
+async function restoreBackupFolderStatus(){
+  if(!window.showDirectoryPicker){
+    setBackupFolderStatus('Backups save to your Downloads folder.');
+    return;
+  }
+  var h = await loadBackupFolderHandle();
+  if(h){
+    backupFolderHandle = h;
+    setBackupFolderStatus('Backups save to the folder: ' + h.name + '.');
+  } else {
+    setBackupFolderStatus('Backups save to your Downloads folder.');
+  }
 }
 function importJSON(ev){
   var f = ev.target.files[0]; if(!f) return;
@@ -3422,6 +3577,7 @@ function toggleMic(){
   renderDay(); loadWakeBedForCurrentDate(); renderWeatherCard(); syncPickerDisplays(); autoFetchDayWeather(document.getElementById('entryDate').value);
   markRecordClean();
   repopulateWeatherAfterDelete();
+  restoreBackupFolderStatus();
   setInterval(autoSaveTick, 1000);
   window.addEventListener('resize', updateGridFixedHead);
   window.addEventListener('scroll', updateGridFixedHead, {passive:true});

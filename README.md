@@ -32,5 +32,5 @@ Allow), then reload.
 
 ## Version
 
-V164. The footer of the app shows its version — check it matches when moving
+V166. The footer of the app shows its version — check it matches when moving
 between copies.
